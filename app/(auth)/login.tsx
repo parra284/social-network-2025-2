@@ -119,11 +119,9 @@ export default function Login() {
 
   const handleLogin = async () => {
     // Replace with actual authentication logic
-    if (email === 'email' && password === 'pass') {
+    
       router.navigate('/(main)/home');
-    } else {
-      alert('Invalid credentials');
-    }
+    
   };
 
   return (
