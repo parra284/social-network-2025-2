@@ -172,11 +172,19 @@ export default function Login() {
             <Text style={styles.buttonText}>Entrar</Text>
           </TouchableOpacity>
 
-          <Link href="/(auth)/recover" asChild>
-            <TouchableOpacity>
-              <Text style={styles.helper}>¿Olvidaste tu contraseña?</Text>
-            </TouchableOpacity>
-          </Link>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 14 }}>
+            <Link href="/(auth)/recover" asChild>
+              <TouchableOpacity>
+                <Text style={styles.helper}>¿Olvidaste tu contraseña?</Text>
+              </TouchableOpacity>
+            </Link>
+            
+            <Link href="/(auth)/register" asChild>
+              <TouchableOpacity>
+                <Text style={styles.helper}>Crear cuenta</Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
         </View>
 
         <Text style={styles.footer}>© 2025 Conexus</Text>
