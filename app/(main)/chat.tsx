@@ -1,6 +1,6 @@
 import { Text } from 'react-native';
 
-export default function Reels() {
+export default function Chat() {
     return (
         <Text>Hola</Text>
     );

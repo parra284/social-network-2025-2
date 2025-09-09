@@ -11,11 +11,11 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { COLORS } from "../constants/colors";
+import { useTheme } from "../hooks/useTheme";
 
 export default function Login() {
   const colorScheme = useColorScheme();
-  const theme = colorScheme === 'dark' ? COLORS.dark : COLORS.light ;
+  const theme = useTheme();
 
   const router = useRouter();
   const [email, setEmail] = useState('');
