@@ -1,4 +1,3 @@
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo } from "react";
 import {
   Image,
@@ -17,13 +16,11 @@ export default function Profile() {
 
   const styles = useMemo(() =>
     StyleSheet.create({
-      gradient: {
-        flex: 1,
-      },
       container: {
         flex: 1,
         paddingTop: 70,
         paddingHorizontal: 30,
+        backgroundColor: theme.neutral50
       },
       topRow: {
         flexDirection: "row",
@@ -123,12 +120,6 @@ export default function Profile() {
     }), [colorScheme, theme]);
 
   return (
-    <LinearGradient
-      colors={[theme.primary50, theme.primary200, theme.primary400]}
-      start={{ x: 0.2, y: 0 }}
-      end={{ x: 0.8, y: 1 }}
-      style={styles.gradient}
-    >
       <ScrollView contentContainerStyle={styles.container}>
         
         {/* Row with name, username, stats */}
@@ -180,6 +171,5 @@ export default function Profile() {
         </View>
 
       </ScrollView>
-    </LinearGradient>
   );
 }
