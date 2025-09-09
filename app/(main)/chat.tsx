@@ -18,19 +18,11 @@ export default function Chat() {
         header: {
           flexDirection: "row",
           alignItems: "center",
-          paddingTop: 18,
+          paddingTop: 24,
           paddingBottom: 10,
-          paddingHorizontal: 18,
+          paddingHorizontal: 24,
         },
-        logo: {
-          width: 50,
-          height: 50,
-          borderRadius: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          marginRight: 4,
-        },
-        appName: {
+        headerTitle: {
           fontSize: 26,
           fontWeight: "500",
           color: theme.primary500,
@@ -84,12 +76,7 @@ export default function Chat() {
     <View style={styles.container}>
       {/* Header: Logo and App Name */}
       <View style={styles.header}>
-        <Image
-          source={require("../../assets/images/app_logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Text style={styles.appName}>Conexus</Text>
+        <Text style={styles.headerTitle}>Chats</Text>
       </View>
       <View style={styles.mainContent}>
         {/* Chat Space Example */}

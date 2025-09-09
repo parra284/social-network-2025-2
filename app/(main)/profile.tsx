@@ -125,8 +125,8 @@ export default function Profile() {
         {/* Row with name, username, stats */}
         <View style={styles.topRow}>
           <View style={styles.info}>
-            <Text style={styles.name}>Jane Doe</Text>
-            <Text style={styles.user}>@janedoe</Text>
+            <Text style={styles.name}>Alejandro Parra</Text>
+            <Text style={styles.user}>@aparrag</Text>
           </View>
         </View>
 
@@ -137,7 +137,7 @@ export default function Profile() {
             <Text style={styles.statLabel}>Posts</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statNumber}>20</Text>
             <Text style={styles.statLabel}>Followers</Text>
           </View>
           <View style={styles.statBox}>
