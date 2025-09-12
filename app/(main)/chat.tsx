@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../hooks/useTheme";
 
 export default function Chat() {
-  const colorScheme = useColorScheme();
   const theme = useTheme();
 
   const styles = useMemo(
@@ -69,7 +68,7 @@ export default function Chat() {
           color: theme.neutral700,
         },
       }),
-    [colorScheme, theme]
+    [theme]
   );
 
   return (

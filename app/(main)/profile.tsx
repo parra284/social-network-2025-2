@@ -5,13 +5,11 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View
 } from "react-native";
 import { useTheme } from "../hooks/useTheme";
 
 export default function Profile() {
-  const colorScheme = useColorScheme();
   const theme = useTheme();
 
   const styles = useMemo(() =>
@@ -117,7 +115,7 @@ export default function Profile() {
         marginTop: 30,
         flex: 1
       }
-    }), [colorScheme, theme]);
+    }), [theme]);
 
   return (
       <ScrollView contentContainerStyle={styles.container}>

@@ -8,13 +8,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  useColorScheme,
+  View
 } from "react-native";
 import { useTheme } from "../hooks/useTheme";
 
 export default function Login() {
-  const colorScheme = useColorScheme();
   const theme = useTheme();
 
   const router = useRouter();
@@ -115,7 +113,7 @@ export default function Login() {
       alignSelf: "center",
       opacity: 0.8,
     },
-  }), [colorScheme, theme]);
+  }), [theme]);
 
   const handleLogin = async () => {
     // Replace with actual authentication logic

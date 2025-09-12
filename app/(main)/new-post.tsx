@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, useColorScheme, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../hooks/useTheme";
 
 export default function NewPost() {
-    const colorScheme = useColorScheme();
     const theme = useTheme();
     const [title, setTitle] = useState("");
     const [idea, setIdea] = useState("");
@@ -63,7 +62,7 @@ export default function NewPost() {
                     fontWeight: "500",
                 },
             }),
-        [colorScheme, theme]
+        [theme]
     );
 
     return (

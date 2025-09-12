@@ -22,7 +22,7 @@ export default function LayoutMain() {
             <Tabs.Screen 
                 name="home"
                 options={{
-                    tabBarIcon: ({ color, size, focused }) => (
+                    tabBarIcon: ({ color }) => (
                         <AntDesign name="home" size={24} color={color} />
                     ),
                     tabBarLabel: () => null,
@@ -31,7 +31,7 @@ export default function LayoutMain() {
             <Tabs.Screen 
                 name="reels"
                 options={{
-                    tabBarIcon: ({ color, size, focused }) => (
+                    tabBarIcon: ({ color }) => (
                         <AntDesign name="fork" size={24} color={color} />
                     ),
                     tabBarLabel: () => null,
@@ -40,7 +40,7 @@ export default function LayoutMain() {
             <Tabs.Screen 
                 name="new-post"
                 options={{
-                    tabBarIcon: ({ color, size, focused }) => (
+                    tabBarIcon: () => (
                         <View style={[
                             styles.newPostButton,
                             {
@@ -58,7 +58,7 @@ export default function LayoutMain() {
             <Tabs.Screen 
                 name="chat"
                 options={{
-                    tabBarIcon: ({ color, size, focused }) => (
+                    tabBarIcon: ({ color }) => (
                         <AntDesign name="message1" size={24} color={color} />
                     ),
                     tabBarLabel: () => null,
@@ -67,7 +67,7 @@ export default function LayoutMain() {
             <Tabs.Screen 
                 name="profile"
                 options={{
-                    tabBarIcon: ({ color, size, focused }) => (
+                    tabBarIcon: ({ color }) => (
                         <AntDesign name="user" size={24} color={color} />
                     ),
                     tabBarLabel: () => null,

@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../hooks/useTheme";
 
 export default function Reels() {
-  const colorScheme = useColorScheme();
   const theme = useTheme();
 
   const styles = useMemo(
@@ -40,7 +39,7 @@ export default function Reels() {
           fontWeight: "600",
         },
       }),
-    [colorScheme, theme]
+    [theme]
   );
 
   return (

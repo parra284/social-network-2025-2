@@ -7,13 +7,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  useColorScheme,
+  View
 } from "react-native";
 import { useTheme } from "../hooks/useTheme";
 
 export default function Register() {
-  const colorScheme = useColorScheme();
   const theme = useTheme();
 
   const router = useRouter();
@@ -116,7 +114,7 @@ export default function Register() {
       alignSelf: "center",
       opacity: 0.8,
     },
-  }), [colorScheme, theme]);
+  }), [theme]);
 
   const handleRegister = async () => {
     // Replace with actual registration logic

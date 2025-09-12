@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../hooks/useTheme";
 
 export default function Home() {
-  const colorScheme = useColorScheme();
   const theme = useTheme();
 
   const styles = useMemo(
@@ -67,7 +66,7 @@ export default function Home() {
           flex: 1,
         },
       }),
-    [colorScheme, theme]
+    [theme]
   );
 
   return (
