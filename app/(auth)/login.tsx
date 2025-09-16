@@ -1,7 +1,8 @@
 // Index.tsx
+import { AuthContext } from '@/contexts/AuthContext';
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -14,9 +15,9 @@ import { useTheme } from "../hooks/useTheme";
 
 export default function Login() {
   const theme = useTheme();
-
+  const context = useContext(AuthContext)
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const styles = useMemo(() => StyleSheet.create({
@@ -115,12 +116,11 @@ export default function Login() {
     },
   }), [theme]);
 
-  const handleLogin = async () => {
-    // Replace with actual authentication logic
-    
-      router.navigate('/(main)/home');
-    
-  };
+  const handleLogin = () => {
+    if (context.login(username, password)) {
+      router.navigate("/(main)/home");
+    }
+  }
 
   return (
     <LinearGradient
@@ -151,8 +151,8 @@ export default function Login() {
             placeholderTextColor={theme.neutral500}
             keyboardType="email-address"
             autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
+            value={username}
+            onChangeText={setUsername}
           />
 
           <TextInput
