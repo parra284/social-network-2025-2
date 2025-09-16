@@ -116,8 +116,9 @@ export default function Login() {
     },
   }), [theme]);
 
-  const handleLogin = () => {
-    if (context.login(username, password)) {
+  const handleLogin = async () => {
+    const response = await context.login(username, password)
+    if (response) {
       router.navigate("/(main)/home");
     }
   }
