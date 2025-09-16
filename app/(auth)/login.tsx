@@ -17,7 +17,7 @@ export default function Login() {
   const theme = useTheme();
   const context = useContext(AuthContext)
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const styles = useMemo(() => StyleSheet.create({
@@ -117,7 +117,7 @@ export default function Login() {
   }), [theme]);
 
   const handleLogin = async () => {
-    const response = await context.login(username, password)
+    const response = await context.login(email, password)
     if (response) {
       router.navigate("/(main)/home");
     }
@@ -152,8 +152,8 @@ export default function Login() {
             placeholderTextColor={theme.neutral500}
             keyboardType="email-address"
             autoCapitalize="none"
-            value={username}
-            onChangeText={setUsername}
+            value={email}
+            onChangeText={setEmail}
           />
 
           <TextInput

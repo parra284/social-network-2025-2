@@ -3,6 +3,5 @@ export interface User {
     username: string,
     name: string,
     lastName: string,
-    imageUrl?: string,
-    age: number
+    imageUrl?: string
 }

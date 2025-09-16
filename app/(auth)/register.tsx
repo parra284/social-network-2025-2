@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
+import { Link } from "expo-router";
+import React, { useContext, useMemo, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -9,14 +9,17 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { AuthContext } from "../../contexts/AuthContext";
 import { useTheme } from "../hooks/useTheme";
 
 export default function Register() {
   const theme = useTheme();
+  const context = useContext(AuthContext);
 
-  const router = useRouter();
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -117,9 +120,25 @@ export default function Register() {
   }), [theme]);
 
   const handleRegister = async () => {
-    // Replace with actual registration logic
-    router.navigate('/(main)/home');
-  };
+    if (password !== confirmPassword) {
+      alert("Las contraseñas no coinciden.");
+      return;
+    }
+    const success = await context.register(
+      {
+        email,
+        username,
+        name,
+        lastName,
+      },
+      password
+    );
+    if (success) {
+      alert("Registro exitoso. ¡Bienvenido a Conexus!");
+    } else {
+      alert("Error al registrar. Verifica tus datos o intenta más tarde.");
+    }
+};
 
   return (
     <LinearGradient
@@ -146,7 +165,26 @@ export default function Register() {
 
           <TextInput
             style={styles.input}
-            placeholder="Nombre"
+            placeholder="Correo"
+            placeholderTextColor={theme.neutral500}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Usuario"
+            placeholderTextColor={theme.neutral500}
+            autoCapitalize="none"
+            value={username}
+            onChangeText={setUsername}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Nombres"
             placeholderTextColor={theme.neutral500}
             value={name}
             onChangeText={setName}
@@ -155,12 +193,11 @@ export default function Register() {
 
           <TextInput
             style={styles.input}
-            placeholder="Correo"
+            placeholder="Apellidos"
             placeholderTextColor={theme.neutral500}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
+            value={lastName}
+            onChangeText={setLastName}
+            autoCapitalize="words"
           />
 
           <TextInput

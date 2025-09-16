@@ -4,29 +4,11 @@ import { createContext, useState } from "react";
 
 interface AuthContextProps {
     user: User | null,
-    login: (username: string, password: string) => Promise<boolean>,
-    register: (user: User, password: string) => void
+    login: (email: string, password: string) => Promise<boolean>,
+    register: (user: User, password: string) => Promise<boolean>
 }
 
 export const AuthContext = createContext({} as AuthContextProps);
-
-const fakeDataSource = {
-    users: [
-        {
-            email: "test@test.com",
-            username: "test",
-            name: "test",
-            lastName: "test",
-            age: 23
-        },
-    ],
-    passwords: [
-        {
-            username: "test",
-            password: "12345678"
-        }
-    ]
-}
 
 export const AuthProvider = ({ children }: any) => {
 
@@ -37,14 +19,24 @@ export const AuthProvider = ({ children }: any) => {
     // funciones
 
     const login = async (email: string, password: string) => {
-
-        const response = await supabase.auth.signInWithPassword({ email, password });
-        return false
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error || !data.user) {
+            console.error("Supabase login error:", error?.message);
+            return false;
+        }
+        setUser(data.user);
+        return true;
     }
 
-    const register = (user: User, password: string) => {
-
+    const register = async (user: User, password: string): Promise<boolean> => {
+        const { data, error } = await supabase.auth.signUp({ email: user.email, password });
+        if (error) {
+            console.error("Supabase register error:", error.message);
+            return false;
+        }
+        return true;
     }
+
     return <AuthContext.Provider
         value={{
             user,
