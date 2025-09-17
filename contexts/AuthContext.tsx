@@ -19,15 +19,44 @@ export const AuthProvider = ({ children }: any) => {
     // funciones
 
     const login = async (email: string, password: string) => {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error || !data.user) {
-            console.error("Supabase login error:", error?.message);
+        try {
+            // Authenticate with Supabase Auth
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                console.error('Login error:', error.message);
+                return false;
+            }
+            
+            if (data.user) {
+                // Fetch complete user profile from profiles table
+                const { data: profileData, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (profileError) {
+                    console.error('Profile fetch error:', profileError.message);
+                    // Fallback: use basic auth data if profile fetch fails
+                    setUser({
+                        id: data.user.id,
+                        email: data.user.email!,
+                        name: data.user.user_metadata.name || data.user.email!.split('@')[0]
+                    });
+                } else {
+                    // Set complete profile data
+                    setUser(profileData);
+                }
+
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.error('Login error:', error);
             return false;
         }
-        console.log("User:", data.user);       // Supabase user object
-        console.log("Session:", data.session);
-        setUser(data.user);
-        return true;
     }
 
     const register = async (user: User, password: string): Promise<boolean> => {
@@ -37,7 +66,8 @@ export const AuthProvider = ({ children }: any) => {
                 password,
                 options: {
                     data: {
-                        name: user.name
+                        name: user.name,
+                        username: user.username
                     }
                 }
             });
@@ -62,6 +92,12 @@ export const AuthProvider = ({ children }: any) => {
                     throw new Error(`Error creando perfil: ${profileError.message}`);
                 }
 
+                setUser({
+                    id: data.user.id,
+                    email: data.user.email!,
+                    name: user.name,
+                    username: user.username
+                });
 
                 return true;
             }

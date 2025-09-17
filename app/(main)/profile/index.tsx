@@ -1,4 +1,6 @@
-import React, { useMemo } from "react";
+import { useTheme } from "@/app/hooks/useTheme";
+import { AuthContext } from '@/contexts/AuthContext';
+import React, { useContext, useMemo } from "react";
 import {
   Image,
   ScrollView,
@@ -7,9 +9,10 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { useTheme } from "../hooks/useTheme";
 
 export default function Profile() {
+  const { user } = useContext(AuthContext);
+
   const theme = useTheme();
 
   const styles = useMemo(() =>
@@ -123,8 +126,8 @@ export default function Profile() {
         {/* Row with name, username, stats */}
         <View style={styles.topRow}>
           <View style={styles.info}>
-            <Text style={styles.name}>Alejandro Parra</Text>
-            <Text style={styles.user}>@aparrag</Text>
+            <Text style={styles.name}>{user?.name}</Text>
+            <Text style={styles.user}>@{user?.username || user?.email?.split('@')[0]}</Text>
           </View>
         </View>
 

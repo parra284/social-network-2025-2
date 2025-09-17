@@ -59,7 +59,7 @@ export default function LayoutMain() {
                 name="chat"
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <AntDesign name="message1" size={24} color={color} />
+                        <AntDesign name="message" size={24} color={color} />
                     ),
                     tabBarLabel: () => null,
                 }}
