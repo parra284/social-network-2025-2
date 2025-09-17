@@ -24,17 +24,53 @@ export const AuthProvider = ({ children }: any) => {
             console.error("Supabase login error:", error?.message);
             return false;
         }
+        console.log("User:", data.user);       // Supabase user object
+        console.log("Session:", data.session);
         setUser(data.user);
         return true;
     }
 
     const register = async (user: User, password: string): Promise<boolean> => {
-        const { data, error } = await supabase.auth.signUp({ email: user.email, password });
-        if (error) {
-            console.error("Supabase register error:", error.message);
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: user.email,
+                password,
+                options: {
+                    data: {
+                        name: user.name
+                    }
+                }
+            });
+
+            if (error) {
+                console.error('Registration error:', error.message);
+                throw new Error(error.message);
+            }
+
+            if (data.user) {
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .insert({
+                        id: data.user.id,
+                        email: user.email,
+                        name: user.name,
+                        username: user.username
+                    });
+
+                if (profileError) {
+                    console.error('Profile creation error:', profileError.message);
+                    throw new Error(`Error creando perfil: ${profileError.message}`);
+                }
+
+
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.error('Registration error:', error);
             return false;
         }
-        return true;
     }
 
     return <AuthContext.Provider

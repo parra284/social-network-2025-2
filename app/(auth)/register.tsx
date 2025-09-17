@@ -1,7 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React, { useContext, useMemo, useState } from "react";
 import {
+  Alert,
   Image,
   StyleSheet,
   Text,
@@ -14,14 +15,14 @@ import { useTheme } from "../hooks/useTheme";
 
 export default function Register() {
   const theme = useTheme();
-  const context = useContext(AuthContext);
-
+  
+  const { register } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const styles = useMemo(() => StyleSheet.create({
     gradient: {
@@ -124,19 +125,40 @@ export default function Register() {
       alert("Las contraseñas no coinciden.");
       return;
     }
-    const success = await context.register(
-      {
-        email,
-        username,
-        name,
-        lastName,
-      },
-      password
-    );
-    if (success) {
-      alert("Registro exitoso. ¡Bienvenido a Conexus!");
-    } else {
-      alert("Error al registrar. Verifica tus datos o intenta más tarde.");
+
+    setLoading(true);
+
+    try {
+      const success = await register(
+        {
+          email: email.trim(),
+          name: name.trim(),
+          username: username.trim(),
+          id: '' // Se asigna automáticamente
+        },
+        password
+      );
+
+      if (success) {
+        Alert.alert(
+          'Cuenta creada',
+          'Tu cuenta ha sido creada exitosamente',
+          [
+            {
+              text: 'OK',
+              onPress: () => router.replace('/(main)/home')
+            }
+          ]
+        );
+      } else {
+        Alert.alert('Error', 'No se pudo crear la cuenta. Intenta de nuevo.');
+      }
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      const errorMessage = error?.message || 'Ocurrió un error inesperado. Intenta de nuevo.';
+      Alert.alert('Error', errorMessage);
+    } finally {
+      setLoading(false);
     }
 };
 
@@ -184,19 +206,10 @@ export default function Register() {
 
           <TextInput
             style={styles.input}
-            placeholder="Nombres"
+            placeholder="Nombre Completo"
             placeholderTextColor={theme.neutral500}
             value={name}
             onChangeText={setName}
-            autoCapitalize="words"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Apellidos"
-            placeholderTextColor={theme.neutral500}
-            value={lastName}
-            onChangeText={setLastName}
             autoCapitalize="words"
           />
 
