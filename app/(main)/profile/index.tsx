@@ -1,5 +1,6 @@
 import { useTheme } from "@/app/hooks/useTheme";
 import { AuthContext } from '@/contexts/AuthContext';
+import { Link } from "expo-router";
 import React, { useContext, useMemo } from "react";
 import {
   Image,
@@ -155,6 +156,14 @@ export default function Profile() {
 
         {/* Buttons */}
         <View style={styles.buttonRow}>
+          <Link
+              href={"/(main)/profile/edit"}
+              asChild
+          >
+              <TouchableOpacity style={styles.messageButton}>
+                  <Text style={styles.messageButtonText}>Editar perfil</Text>
+              </TouchableOpacity>
+          </Link>
           <TouchableOpacity style={styles.followButton}>
             <Text style={styles.followButtonText}>Follow</Text>
           </TouchableOpacity>
@@ -166,7 +175,7 @@ export default function Profile() {
         {/* Avatar stays where you want it */}
         <View style={styles.avatarWrap}>
           <Image
-            source={{ uri: "https://randomuser.me/api/portraits/women/44.jpg" }}
+            source={{ uri: "https://randomuser.me/api/portraits/men/44.jpg" }}
             style={styles.avatar}
           />
         </View>

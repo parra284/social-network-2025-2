@@ -5,7 +5,8 @@ import { createContext, useState } from "react";
 interface AuthContextProps {
     user: User | null,
     login: (email: string, password: string) => Promise<boolean>,
-    register: (user: User, password: string) => Promise<boolean>
+    register: (user: User, password: string) => Promise<boolean>,
+    updateProfile: (profileData: Partial<User>) => Promise<boolean>
 }
 
 export const AuthContext = createContext({} as AuthContextProps);
@@ -109,11 +110,44 @@ export const AuthProvider = ({ children }: any) => {
         }
     }
 
+     const updateProfile = async (profileData: Partial<User>) => {
+        if (!user?.id) {
+            console.error('No user ID available');
+            return false;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({
+                    ...profileData,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', user.id);
+
+            if (error) {
+                console.error('Update profile error:', error.message);
+                throw new Error(error.message);
+            }
+
+            setUser({
+                ...user,
+                ...profileData
+            });
+
+            return true;
+        } catch (error) {
+            console.error('Update profile error:', error);
+            return false;
+        }
+    };
+
     return <AuthContext.Provider
         value={{
             user,
             login,
             register,
+            updateProfile
         }}
     >
         {children}
