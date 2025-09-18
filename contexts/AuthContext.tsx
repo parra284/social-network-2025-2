@@ -43,7 +43,8 @@ export const AuthProvider = ({ children }: any) => {
                     setUser({
                         id: data.user.id,
                         email: data.user.email!,
-                        name: data.user.user_metadata.name || data.user.email!.split('@')[0]
+                        name: data.user.user_metadata.name || data.user.email!.split('@')[0],
+                        username: data.user.user_metadata.username || data.user.email!.split('@')[0]
                     });
                 } else {
                     // Set complete profile data

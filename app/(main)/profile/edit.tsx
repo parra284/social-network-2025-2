@@ -1,11 +1,10 @@
 import { AuthContext } from '@/contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import {
     Alert,
     Image,
-    Platform,
     ScrollView,
     StyleSheet,
     Text,
@@ -13,17 +12,19 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+// ADD THIS import:
+import { useTheme } from '@/app/hooks/useTheme'; // <-- adjust the path if your hook is elsewhere
 
 export default function EditProfile() {
     const router = useRouter();
     const { user, updateProfile } = useContext(AuthContext);
+    const theme = useTheme();
 
-    // Estados para los campos del formulario
     const [formData, setFormData] = useState({
         name: user?.name || '',
-        username: user?.username || ''
+        username: user?.username || '',
+        bio: user?.bio || '',
     });
-
     const [loading, setLoading] = useState(false);
 
     const handleInputChange = (field: string, value: string) => {
@@ -31,25 +32,21 @@ export default function EditProfile() {
     };
 
     const handleSave = async () => {
-        // Validaciones básicas
         if (!formData.name.trim()) {
             Alert.alert('Error', 'El nombre es requerido');
             return;
         }
-
         if (formData.username && formData.username.length < 3) {
             Alert.alert('Error', 'El nombre de usuario debe tener al menos 3 caracteres');
             return;
         }
-
         setLoading(true);
-
         try {
             const success = await updateProfile({
                 name: formData.name.trim(),
-                username: formData.username.trim() || undefined
+                username: formData.username.trim() || undefined,
+                bio: formData.bio.trim() || undefined,
             });
-
             if (success) {
                 Alert.alert(
                     'Éxito',
@@ -64,9 +61,7 @@ export default function EditProfile() {
             } else {
                 Alert.alert('Error', 'No se pudo actualizar el perfil. Intenta de nuevo.');
             }
-
         } catch (error: any) {
-            console.error('Update profile error:', error);
             const errorMessage = error?.message || 'Ocurrió un error inesperado. Intenta de nuevo.';
             Alert.alert('Error', errorMessage);
         } finally {
@@ -86,6 +81,101 @@ export default function EditProfile() {
         );
     };
 
+    // **** THEME-BASED STYLES ****
+    const styles = useMemo(() => StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.neutral50,
+        },
+        avatarSection: {
+            alignItems: 'center',
+            paddingVertical: 24,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.primary100,
+        },
+        avatarContainer: {
+            position: 'relative',
+            marginBottom: 12,
+        },
+        avatar: {
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            backgroundColor: theme.neutral100,
+        },
+        avatarOverlay: {
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            backgroundColor: theme.neutral800 + 'B0', // Black w/ opacity, or use alpha from your theme
+            borderRadius: 15,
+            width: 30,
+            height: 30,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderWidth: 2,
+            borderColor: theme.neutral50,
+        },
+        changePhotoText: {
+            fontSize: 16,
+            color: theme.primary500,
+            fontWeight: '500',
+        },
+        form: {
+            padding: 16,
+        },
+        fieldContainer: {
+            marginBottom: 24,
+        },
+        label: {
+            fontSize: 16,
+            fontWeight: '500',
+            color: theme.primary700,
+            marginBottom: 8,
+        },
+        input: {
+            borderWidth: 1,
+            borderColor: theme.primary100,
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+            fontSize: 15,
+            backgroundColor: theme.neutral100,
+            color: theme.neutral900,
+            marginBottom: 8,
+        },
+        characterCount: {
+            fontSize: 12,
+            color: '#666',
+            textAlign: 'right',
+            marginTop: 4,
+        },
+        bioInput: {
+            height: 80,
+            paddingTop: 12,
+        },
+        saveButton: {
+            backgroundColor: theme.primary500,
+            marginHorizontal: 20,
+            paddingVertical: 10,
+            alignContent: "center",
+            alignItems: "center",
+            borderRadius: 8,
+            marginTop: 10,
+        },
+        saveButtonText: {
+            color: theme.neutral50,
+            fontWeight: '500',
+            fontSize: 16,
+        },
+        buttonDisabled: {
+            opacity: 0.5,
+        },
+        bottomPadding: {
+            height: 50,
+        },
+    }), [theme]);
+
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <View style={styles.avatarSection}>
@@ -97,7 +187,7 @@ export default function EditProfile() {
                         style={styles.avatar}
                     />
                     <View style={styles.avatarOverlay}>
-                        <Ionicons name="camera" size={20} color="white" />
+                        <Ionicons name="camera" size={20} color={theme.neutral50} />
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={selectImage}>
@@ -106,29 +196,43 @@ export default function EditProfile() {
             </View>
             <View style={styles.form}>
                 <View style={styles.fieldContainer}>
-                    <Text style={styles.label}>Nombre *</Text>
+                    <Text style={styles.label}>Nombre</Text>
                     <TextInput
                         style={styles.input}
                         value={formData.name}
                         onChangeText={(value) => handleInputChange('name', value)}
                         placeholder="Tu nombre completo"
-                        placeholderTextColor="#999"
+                        placeholderTextColor={theme.neutral400}
                         maxLength={50}
                     />
                 </View>
                 <View style={styles.fieldContainer}>
-                    <Text style={styles.label}>Nombre de usuario</Text>
+                    <Text style={styles.label}>Usuario</Text>
                     <TextInput
                         style={styles.input}
                         value={formData.username}
                         onChangeText={(value) => handleInputChange('username', value)}
                         placeholder="@nombredeusuario"
-                        placeholderTextColor="#999"
+                        placeholderTextColor={theme.neutral400}
                         autoCapitalize="none"
                         maxLength={30}
                     />
-                    <Text style={styles.helpText}>
-                        Solo letras, números y guiones bajos
+                </View>
+                <View style={styles.fieldContainer}>
+                    <Text style={styles.label}>Biografía</Text>
+                    <TextInput
+                        style={[styles.input, styles.bioInput]}
+                        value={formData.bio}
+                        onChangeText={(value) => handleInputChange('bio', value)}
+                        placeholder="Cuéntanos sobre ti..."
+                        placeholderTextColor="#999"
+                        multiline
+                        numberOfLines={4}
+                        maxLength={150}
+                        textAlignVertical="top"
+                    />
+                    <Text style={styles.characterCount}>
+                        {formData.bio.length}/150
                     </Text>
                 </View>
             </View>
@@ -145,115 +249,3 @@ export default function EditProfile() {
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#e1e1e1',
-        paddingTop: Platform.OS === 'ios' ? 50 : 12,
-    },
-    backButton: {
-        padding: 4,
-    },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#333',
-    },
-    saveButton: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        alignContent: "center",
-        alignItems: "center"
-    },
-    saveButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#007AFF',
-    },
-    buttonDisabled: {
-        opacity: 0.5,
-    },
-    avatarSection: {
-        alignItems: 'center',
-        paddingVertical: 24,
-        borderBottomWidth: 1,
-        borderBottomColor: '#e1e1e1',
-    },
-    avatarContainer: {
-        position: 'relative',
-        marginBottom: 12,
-    },
-    avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: '#f0f0f0',
-    },
-    avatarOverlay: {
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        backgroundColor: 'rgba(0,0,0,0.7)',
-        borderRadius: 15,
-        width: 30,
-        height: 30,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 2,
-        borderColor: '#fff',
-    },
-    changePhotoText: {
-        fontSize: 16,
-        color: '#007AFF',
-        fontWeight: '500',
-    },
-    form: {
-        padding: 16,
-    },
-    fieldContainer: {
-        marginBottom: 24,
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: '500',
-        color: '#333',
-        marginBottom: 8,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#e1e1e1',
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        fontSize: 16,
-        backgroundColor: '#fafafa',
-    },
-    bioInput: {
-        height: 80,
-        paddingTop: 12,
-    },
-    helpText: {
-        fontSize: 12,
-        color: '#666',
-        marginTop: 4,
-    },
-    characterCount: {
-        fontSize: 12,
-        color: '#666',
-        textAlign: 'right',
-        marginTop: 4,
-    },
-    bottomPadding: {
-        height: 50,
-    },
-});

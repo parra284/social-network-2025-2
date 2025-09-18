@@ -69,6 +69,12 @@ export default function Profile() {
         color: theme.neutral800, 
         marginBottom: 4, 
       }, 
+      bio: {
+        fontSize: 14,
+        color: theme.neutral500,
+        lineHeight: 20,
+        marginBottom: 20
+      },
       followedBy: { 
         color: theme.neutral500, 
         fontSize: 13, 
@@ -77,6 +83,7 @@ export default function Profile() {
       buttonRow: {
         flexDirection: "row",
         justifyContent: "space-between",
+        gap: 4,
         marginBottom: 20,
       },
       followButton: {
@@ -84,8 +91,7 @@ export default function Profile() {
         backgroundColor: theme.primary500,
         borderRadius: 8,
         paddingVertical: 8,
-        alignItems: "center",
-        marginRight: 8,
+        alignItems: "center"
       },
       followButtonText: {
         color: theme.neutral50,
@@ -128,28 +134,31 @@ export default function Profile() {
         <View style={styles.topRow}>
           <View style={styles.info}>
             <Text style={styles.name}>{user?.name}</Text>
-            <Text style={styles.user}>@{user?.username || user?.email?.split('@')[0]}</Text>
+            <Text style={styles.user}>@{user?.username}</Text>
           </View>
         </View>
 
         {/* Stats row */}
         <View style={styles.statsWrap}>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statNumber}>{user?.posts_count}</Text>
             <Text style={styles.statLabel}>Posts</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>20</Text>
+            <Text style={styles.statNumber}>{user?.followers_count}</Text>
             <Text style={styles.statLabel}>Followers</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>8</Text>
+            <Text style={styles.statNumber}>{user?.following_count}</Text>
             <Text style={styles.statLabel}>Following</Text>
           </View>
         </View>
 
         {/* Bio */}
         <View style={styles.section}> 
+           <Text style={styles.bio}>
+              {user?.bio}
+          </Text>
           <Text style={styles.sectionTitle}>Seguido por</Text> 
           <Text style={styles.followedBy}>@john, @alice, @bob y 10 más</Text> 
         </View>
@@ -161,7 +170,7 @@ export default function Profile() {
               asChild
           >
               <TouchableOpacity style={styles.messageButton}>
-                  <Text style={styles.messageButtonText}>Editar perfil</Text>
+                  <Text style={styles.messageButtonText}>Edit profile</Text>
               </TouchableOpacity>
           </Link>
           <TouchableOpacity style={styles.followButton}>
