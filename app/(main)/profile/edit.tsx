@@ -1,3 +1,4 @@
+import ModalCamera from '@/components/ModalCamera';
 import { AuthContext } from '@/contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -14,6 +15,7 @@ import {
 } from 'react-native';
 // ADD THIS import:
 import { useTheme } from '@/app/hooks/useTheme'; // <-- adjust the path if your hook is elsewhere
+import { supabase } from '@/utils/supabase';
 
 export default function EditProfile() {
     const router = useRouter();
@@ -27,9 +29,29 @@ export default function EditProfile() {
     });
     const [loading, setLoading] = useState(false);
 
+    const [cameraVisible, setCameraVisible] = useState(false);
+    const [avatar, setAvatar] = useState(user?.avatar_url || 'https://via.placeholder.com/100/e1e1e1/666?text=User');
+
     const handleInputChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
+
+    const generateUrlProfile = async () => {
+        try {
+            // URL -> avatar -> blob
+
+
+            // fetch()
+            const file = await fetch
+
+             const { data, error } = await supabase.storage.from('bucket_name').upload('file_path', file)
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     const handleSave = async () => {
         if (!formData.name.trim()) {
@@ -42,6 +64,9 @@ export default function EditProfile() {
         }
         setLoading(true);
         try {
+
+            const urlProfile = await generateUrlProfile()
+
             const success = await updateProfile({
                 name: formData.name.trim(),
                 username: formData.username.trim() || undefined,
@@ -74,11 +99,17 @@ export default function EditProfile() {
             'Cambiar foto de perfil',
             'Selecciona una opción',
             [
-                { text: 'Cámara', onPress: () => console.log('Camera selected') },
+                { text: 'Cámara', onPress: () => setCameraVisible(true) },
                 { text: 'Galería', onPress: () => console.log('Gallery selected') },
                 { text: 'Cancelar', style: 'cancel' }
             ]
         );
+    };
+
+    const handleCapture = (uri: string) => {
+        setAvatar(uri);
+
+
     };
 
     // **** THEME-BASED STYLES ****
@@ -181,9 +212,7 @@ export default function EditProfile() {
             <View style={styles.avatarSection}>
                 <TouchableOpacity onPress={selectImage} style={styles.avatarContainer}>
                     <Image
-                        source={{
-                            uri: user?.avatar_url || 'https://via.placeholder.com/100/e1e1e1/666?text=User'
-                        }}
+                        source={{ uri: avatar }}
                         style={styles.avatar}
                     />
                     <View style={styles.avatarOverlay}>
@@ -246,6 +275,12 @@ export default function EditProfile() {
                 </Text>
             </TouchableOpacity>
             <View style={styles.bottomPadding} />
+            <ModalCamera
+                visible={cameraVisible}
+                onClose={() => setCameraVisible(false)}
+                onCapture={handleCapture}
+            />
+
         </ScrollView>
     );
 }
