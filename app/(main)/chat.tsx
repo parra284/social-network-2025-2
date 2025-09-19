@@ -1,76 +1,8 @@
-import React, { useMemo } from "react";
+import { colors } from "@/styles/colors";
+import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { useTheme } from "../hooks/useTheme";
 
 export default function Chat() {
-  const theme = useTheme();
-
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        container: {
-          flex: 1,
-          backgroundColor: theme.neutral50,
-          paddingHorizontal: 0,
-          paddingTop: 20,
-        },
-        header: {
-          flexDirection: "row",
-          alignItems: "center",
-          paddingTop: 24,
-          paddingBottom: 10,
-          paddingHorizontal: 24,
-        },
-        headerTitle: {
-          fontSize: 26,
-          fontWeight: "500",
-          color: theme.primary500,
-          letterSpacing: 0.5,
-        },
-        mainContent: {
-          flex: 1,
-          paddingHorizontal: 18,
-          justifyContent: "flex-start",
-          alignItems: "flex-start",
-        },
-        chatSpaceContainer: {
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: theme.primary100,
-          borderRadius: 12,
-          padding: 12,
-          marginTop: 12,
-          width: "100%",
-          shadowColor: theme.primary900,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 2,
-        },
-        profileImage: {
-          width: 40,
-          height: 40,
-          borderRadius: 20,
-          marginRight: 12,
-        },
-        chatTextContainer: {
-          flex: 1,
-          justifyContent: "center",
-        },
-        chatName: {
-          fontSize: 16,
-          fontWeight: "500",
-          color: theme.primary700,
-          marginBottom: 4,
-        },
-        lastMessage: {
-          fontSize: 14,
-          color: theme.neutral700,
-        },
-      }),
-    [theme]
-  );
-
   return (
     <View style={styles.container}>
       {/* Header: Logo and App Name */}
@@ -96,3 +28,65 @@ export default function Chat() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.neutral50,
+    paddingHorizontal: 0,
+    paddingTop: 20,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingTop: 24,
+    paddingBottom: 10,
+    paddingHorizontal: 24,
+  },
+  headerTitle: {
+    fontSize: 26,
+    fontWeight: "500",
+    color: colors.primary500,
+    letterSpacing: 0.5,
+  },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 18,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  chatSpaceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.primary100,
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 12,
+    width: "100%",
+    shadowColor: colors.primary900,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+  chatTextContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  chatName: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: colors.primary700,
+    marginBottom: 4,
+  },
+  lastMessage: {
+    fontSize: 14,
+    color: colors.neutral700,
+  },
+})

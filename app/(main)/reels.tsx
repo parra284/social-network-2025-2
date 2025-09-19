@@ -1,47 +1,8 @@
-import React, { useMemo } from "react";
+import { colors } from "@/styles/colors";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "../hooks/useTheme";
 
 export default function Reels() {
-  const theme = useTheme();
-
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        container: {
-          flex: 1,
-          backgroundColor: theme.neutral50,
-          paddingHorizontal: 0,
-          paddingTop: 20,
-        },
-        header: {
-          flexDirection: "row",
-          alignItems: "center",
-          paddingTop: 24,
-          paddingBottom: 10,
-          paddingHorizontal: 24,
-        },
-        headerTitle: {
-          fontSize: 26,
-          fontWeight: "500",
-          color: theme.primary500,
-          letterSpacing: 0.5,
-        },
-        mainContent: {
-          flex: 1,
-          paddingHorizontal: 18,
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        placeholderText: {
-          fontSize: 20,
-          color: theme.neutral400,
-          fontWeight: "600",
-        },
-      }),
-    [theme]
-  );
-
   return (
     <View style={styles.container}>
       {/* Header: Logo and App Name */}
@@ -54,3 +15,36 @@ export default function Reels() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.neutral50,
+    paddingHorizontal: 0,
+    paddingTop: 20,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingTop: 24,
+    paddingBottom: 10,
+    paddingHorizontal: 24,
+  },
+  headerTitle: {
+    fontSize: 26,
+    fontWeight: "500",
+    color: colors.primary500,
+    letterSpacing: 0.5,
+  },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 18,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  placeholderText: {
+    fontSize: 20,
+    color: colors.neutral400,
+    fontWeight: "600",
+  },
+})
