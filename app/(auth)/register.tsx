@@ -1,15 +1,14 @@
+import BrandWrap from "@/components/auth/BrandWrap";
+import Card from "@/components/auth/Card";
 import { AuthContext } from "@/contexts/AuthContext";
 import { colors } from "@/styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import React, { useContext, useState } from "react";
 import {
   Alert,
-  Image,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View
 } from "react-native";
 
@@ -64,7 +63,7 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
-};
+  };
 
   return (
     <LinearGradient
@@ -75,78 +74,47 @@ export default function Register() {
     >
       <View style={styles.container}>
         {/* Marca con logo */}
-        <View style={styles.brandWrap}>
-          <Image
-            source={require("../../assets/images/app_logo.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          <Text style={styles.brand}>Conexus</Text>
-          <Text style={styles.tagline}>Conectando ideas, creando futuro</Text>
-        </View>
+        <BrandWrap />
 
         {/* Card de registro */}
-        <View style={styles.card}>
-          <Text style={styles.title}>Crear cuenta</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="Correo"
-            placeholderTextColor={colors.neutral500}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Usuario"
-            placeholderTextColor={colors.neutral500}
-            autoCapitalize="none"
-            value={username}
-            onChangeText={setUsername}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Nombre Completo"
-            placeholderTextColor={colors.neutral500}
-            value={name}
-            onChangeText={setName}
-            autoCapitalize="words"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Contraseña"
-            placeholderTextColor={colors.neutral500}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Confirmar contraseña"
-            placeholderTextColor={colors.neutral500}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-          />
-
-          <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={handleRegister}>
-            <Text style={styles.buttonText}>Registrarse</Text>
-          </TouchableOpacity>
-
-          <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 14 }}>
-            <Link href="/(auth)/login" asChild>
-              <TouchableOpacity>
-                <Text style={styles.helper}>Iniciar sesión</Text>
-              </TouchableOpacity>
-            </Link>
-          </View>
-        </View>
+        <Card
+          title="Registrarse"
+          inputs={[
+            {
+              placeholder: "Correo",
+              value: email,
+              onChangeText: setEmail,
+              keyboardType: "email-address",
+            },
+            {
+              placeholder: "Usuario",
+              value: username,
+              onChangeText: setUsername
+            },
+            {
+              placeholder: "Nombre",
+              value: name,
+              onChangeText: setName
+            },
+            {
+              placeholder: "Contraseña",
+              value: password,
+              onChangeText: setPassword,
+              secureTextEntry: true,
+            },
+            {
+              placeholder: "Confirmar contraseña",
+              value: confirmPassword,
+              onChangeText: setConfirmPassword,
+              secureTextEntry: true,
+            },
+          ]}
+          buttonLabel="Registrarse"
+          onPress={handleRegister}
+          links={[
+            { label: "Iniciar sesión", href: "/(auth)/login" },
+          ]}
+        />
 
         <Text style={styles.footer}>© 2025 Conexus</Text>
       </View>

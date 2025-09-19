@@ -1,18 +1,17 @@
+import { colors } from '@/styles/colors';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Tabs } from "expo-router";
 import { Platform, StyleSheet, View } from 'react-native';
-import { useTheme } from '../hooks/useTheme';
 
 export default function LayoutMain() {
-    const theme = useTheme();
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: theme.primary500,
-                tabBarInactiveTintColor: theme.neutral400,
+                tabBarActiveTintColor: colors.primary500,
+                tabBarInactiveTintColor: colors.neutral400,
                 tabBarStyle: {
-                    backgroundColor: theme.neutral50,
-                    borderTopColor: theme.neutral200,
+                    backgroundColor: colors.neutral50,
+                    borderTopColor: colors.neutral200,
                     height: 60,
                     paddingTop: 10, // Added top padding
                 },
@@ -44,12 +43,12 @@ export default function LayoutMain() {
                         <View style={[
                             styles.newPostButton,
                             {
-                                backgroundColor: theme.primary500,
-                                shadowColor: theme.primary500,
-                                borderColor: theme.neutral200,
+                                backgroundColor: colors.primary500,
+                                shadowColor: colors.primary500,
+                                borderColor: colors.neutral200,
                             },
                         ]}>
-                            <AntDesign name="plus" size={32} color={theme.neutral50} />
+                            <AntDesign name="plus" size={32} color={colors.neutral50} />
                         </View>
                     ),
                     tabBarLabel: () => null,
