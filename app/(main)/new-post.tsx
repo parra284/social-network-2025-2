@@ -1,6 +1,8 @@
+import Button from "@/components/Button";
+import Header from "@/components/Header";
 import { colors } from "@/styles/colors";
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function NewPost() {
 	const [title, setTitle] = useState("");
@@ -8,6 +10,9 @@ export default function NewPost() {
 
 	return (
 		<View style={styles.container}>
+      <Header 
+        title="New Post"
+      />
 			<View style={styles.mainContent}>
 				<Text style={styles.label}>Título</Text>
 				<TextInput
@@ -27,9 +32,10 @@ export default function NewPost() {
 					multiline
 				/>
 				<View style={styles.buttonRow}>
-					<TouchableOpacity style={[styles.button, styles.submitButton]}>
-						<Text style={styles.submitText}>Publicar</Text>
-					</TouchableOpacity>
+					<Button
+					label="Publicar"
+					onPress={() => (console.log('Publicar clicked'))}
+					/>
 				</View>
 			</View>
 		</View>
@@ -74,15 +80,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "flex-end",
 		marginTop: 24,
-	},
-	button: {
-		paddingVertical: 10,
-		paddingHorizontal: 22,
-		borderRadius: 8,
-		marginLeft: 10,
-	},
-	submitButton: {
-		backgroundColor: colors.primary500,
 	},
 	submitText: {
 		color: colors.neutral50,

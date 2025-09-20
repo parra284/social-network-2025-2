@@ -1,4 +1,3 @@
-// components/BrandWrap.tsx
 import { colors } from "@/styles/colors";
 import { Image, StyleSheet, Text, View } from "react-native";
 

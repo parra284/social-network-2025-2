@@ -1,14 +1,13 @@
-// components/Card.tsx
 import { colors } from "@/styles/colors";
 import { Href, Link } from "expo-router";
 import React from "react";
 import {
-    KeyboardTypeOptions,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  KeyboardTypeOptions,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 type CardProps = {

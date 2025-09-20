@@ -1,13 +1,13 @@
+import Button from '@/components/Button';
 import { AuthContext } from '@/contexts/AuthContext';
 import { colors } from "@/styles/colors";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import React, { useContext } from "react";
 import {
   Image,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from "react-native";
 
@@ -52,21 +52,12 @@ export default function Profile() {
 
         {/* Buttons */}
         <View style={styles.buttonRow}>
-          <Link
-              href={"/(main)/profile/edit"}
-              asChild
-          >
-              <TouchableOpacity style={styles.messageButton}>
-                  <Text style={styles.messageButtonText}>Edit profile</Text>
-              </TouchableOpacity>
-          </Link>
-          <TouchableOpacity style={styles.followButton}>
-            <Text style={styles.followButtonText}>Follow</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.messageButton}>
-            <Text style={styles.messageButtonText}>Message</Text>
-          </TouchableOpacity>
+          <Button
+            label='Edit profile'
+            onPress={() => router.navigate('/profile/edit')}
+          />
         </View>
+        
 
         {/* Avatar stays where you want it */}
         <View style={styles.avatarWrap}>
@@ -148,32 +139,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 4,
     marginBottom: 20,
-  },
-  followButton: {
-    flex: 1,
-    backgroundColor: colors.primary500,
-    borderRadius: 8,
-    paddingVertical: 8,
-    alignItems: "center"
-  },
-  followButtonText: {
-    color: colors.neutral50,
-    fontWeight: "700",
-    fontSize: 15,
-  },
-  messageButton: {
-    flex: 1,
-    backgroundColor: colors.neutral100,
-    borderRadius: 8,
-    paddingVertical: 8,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.primary200,
-  },
-  messageButtonText: {
-    color: colors.primary500,
-    fontWeight: "700",
-    fontSize: 15,
   },
   avatar: {
     width: 90,
