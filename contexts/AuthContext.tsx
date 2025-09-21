@@ -18,6 +18,24 @@ export const AuthProvider = ({ children }: any) => {
     const [user, setUser] = useState(null as any);
 
     // funciones
+    const fetchData = async (userId: string) => {
+        try {
+            const { data: profileData, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .single();
+
+            if (error) {
+            console.error("Profile fetch error:", error.message);
+            return; // nothing returned
+            }
+
+            setUser(profileData);
+        } catch (err) {
+            console.error("Unexpected fetch error:", err);
+        }
+    };
 
     const login = async (email: string, password: string) => {
         try {
@@ -31,26 +49,9 @@ export const AuthProvider = ({ children }: any) => {
             
             if (data.user) {
                 // Fetch complete user profile from profiles table
-                const { data: profileData, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', data.user.id)
-                    .single();
+                await fetchData(data.user.id)
 
-                if (profileError) {
-                    console.error('Profile fetch error:', profileError.message);
-                    // Fallback: use basic auth data if profile fetch fails
-                    setUser({
-                        id: data.user.id,
-                        email: data.user.email!,
-                        name: data.user.user_metadata.name || data.user.email!.split('@')[0],
-                        username: data.user.user_metadata.username || data.user.email!.split('@')[0]
-                    });
-                } else {
-                    // Set complete profile data
-                    setUser(profileData);
-                }
-
+                console.log(user);
                 return true;
             }
 
@@ -94,12 +95,9 @@ export const AuthProvider = ({ children }: any) => {
                     throw new Error(`Error creando perfil: ${profileError.message}`);
                 }
 
-                setUser({
-                    id: data.user.id,
-                    email: data.user.email!,
-                    name: user.name,
-                    username: user.username
-                });
+                await fetchData(data.user.id)
+
+                console.log(user);
 
                 return true;
             }
@@ -130,6 +128,7 @@ export const AuthProvider = ({ children }: any) => {
                 console.error('Update profile error:', error.message);
                 throw new Error(error.message);
             }
+            console.log(user);
 
             setUser({
                 ...user,

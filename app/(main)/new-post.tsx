@@ -14,24 +14,24 @@ export default function NewPost() {
         title="New Post"
       />
 			<Form
-			inputs={[
-				{
-					label: "Titulo",
-					placeholder: "Escribe el titulo...",
-					value: title,
-					onChangeText: setTitle
-				},
-				{
-					label: "Idea",
-					placeholder: "Comparte tu idea...",
-					value: idea,
-					onChangeText: setIdea,
-					multiline: true,
-					minHeight: 80
-				}
-			]}
-			buttonLabel="Publicar"
-			onPress={() => console.log("Publicar")}
+				inputs={[
+					{
+						label: "Titulo",
+						placeholder: "Escribe el titulo...",
+						value: title,
+						onChangeText: setTitle
+					},
+					{
+						label: "Idea",
+						placeholder: "Comparte tu idea...",
+						value: idea,
+						onChangeText: setIdea,
+						multiline: true,
+						minHeight: 80
+					}
+				]}
+				buttonLabel="Publicar"
+				onPress={() => console.log("Publicar")}
 			/>
 		</View>
 	);

@@ -1,6 +1,6 @@
 import { colors } from "@/styles/colors";
 import { Href, Link } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   KeyboardTypeOptions,
   StyleSheet,
@@ -39,9 +39,19 @@ export default function Form({
   inputs,
   buttonLabel,
   onPress,
-  links = [],
-  
+  links = []
 }: FormProps) {
+  const [loading, setLoading] = useState(false);
+
+  const handlePress = async () => {
+    try {
+      setLoading(true);
+      await onPress();
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <View style={styles.form}>
       {title ? <Text style={styles.title}>{title}</Text> : null}
@@ -65,8 +75,13 @@ export default function Form({
       ))}
 
 
-      <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={onPress}>
-        <Text style={styles.buttonText}>{buttonLabel}</Text>
+      <TouchableOpacity 
+        style={[styles.button, {opacity: loading ? 0.6 : 1}]}  
+        onPress={handlePress}
+        disabled={loading}>
+        <Text style={styles.buttonText}>
+          {loading ? "Loading..." : buttonLabel}
+        </Text>
       </TouchableOpacity>
 
       {links.length > 0 && (

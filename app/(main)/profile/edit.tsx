@@ -1,4 +1,4 @@
-import ModalCamera from '@/components/ModalCamera';
+import Form from '@/components/Form';
 import { AuthContext } from '@/contexts/AuthContext';
 import { colors } from "@/styles/colors";
 import { supabase } from '@/utils/supabase';
@@ -11,7 +11,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
@@ -27,7 +26,6 @@ export default function EditProfile() {
     username: user?.username || '',
     bio: user?.bio || '',
   });
-  const [loading, setLoading] = useState(false);
 
 
   const [cameraVisible, setCameraVisible] = useState(false);
@@ -67,7 +65,6 @@ export default function EditProfile() {
       Alert.alert('Error', 'El nombre de usuario debe tener al menos 3 caracteres');
       return;
     }
-    setLoading(true);
     try {
 
 
@@ -96,8 +93,6 @@ export default function EditProfile() {
     } catch (error: any) {
       const errorMessage = error?.message || 'Ocurrió un error inesperado. Intenta de nuevo.';
       Alert.alert('Error', errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -139,65 +134,32 @@ export default function EditProfile() {
           <Text style={styles.changePhotoText}>Cambiar foto de perfil</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.form}>
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Nombre</Text>
-          <TextInput
-            style={styles.input}
-            value={formData.name}
-            onChangeText={(value) => handleInputChange('name', value)}
-            placeholder="Tu nombre completo"
-            placeholderTextColor={colors.neutral400}
-            maxLength={50}
-          />
-        </View>
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Usuario</Text>
-          <TextInput
-            style={styles.input}
-            value={formData.username}
-            onChangeText={(value) => handleInputChange('username', value)}
-            placeholder="@nombredeusuario"
-            placeholderTextColor={colors.neutral400}
-            autoCapitalize="none"
-            maxLength={30}
-          />
-        </View>
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Biografía</Text>
-          <TextInput
-            style={[styles.input, styles.bioInput]}
-            value={formData.bio}
-            onChangeText={(value) => handleInputChange('bio', value)}
-            placeholder="Cuéntanos sobre ti..."
-            placeholderTextColor="#999"
-            multiline
-            numberOfLines={4}
-            maxLength={150}
-            textAlignVertical="top"
-          />
-          <Text style={styles.characterCount}>
-            {formData.bio.length}/150
-          </Text>
-        </View>
-      </View>
-      <TouchableOpacity
+      <Form 
+        inputs={[
+          {
+            label: "Nombre",
+            placeholder: "Tu nombre completo",
+            value: formData.name,
+            onChangeText: (value) => handleInputChange('name', value)
+          },
+          {
+            label: "Usuario",
+            placeholder: "Tu usuario",
+            value: formData.username,
+            onChangeText: (value) => handleInputChange('username', value)
+          },
+          {
+            label: "Bigografía",
+            placeholder: "Cuéntanos sobre ti...",
+            value: formData.bio,
+            onChangeText: (value) => handleInputChange('bio', value),
+            multiline: true,
+            minHeight: 80
+          }
+        ]}
+        buttonLabel= "Guardar"
         onPress={handleSave}
-        style={[styles.saveButton, loading && styles.buttonDisabled]}
-        disabled={loading}
-      >
-        <Text style={styles.saveButtonText}>
-          {loading ? 'Guardando...' : 'Guardar'}
-        </Text>
-      </TouchableOpacity>
-      <View style={styles.bottomPadding} />
-      <ModalCamera
-        visible={cameraVisible}
-        onClose={() => setCameraVisible(false)}
-        onCapture={handleCapture}
       />
-
-
     </ScrollView>
   );
 }

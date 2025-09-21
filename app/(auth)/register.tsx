@@ -21,15 +21,11 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const [loading, setLoading] = useState(false);
-
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       alert("Las contraseñas no coinciden.");
       return;
     }
-
-    setLoading(true);
 
     try {
       const success = await register(
@@ -60,8 +56,6 @@ export default function Register() {
       console.error('Registration error:', error);
       const errorMessage = error?.message || 'Ocurrió un error inesperado. Intenta de nuevo.';
       Alert.alert('Error', errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
