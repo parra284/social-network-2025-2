@@ -48,7 +48,7 @@ export default function EditProfile() {
       const file = await fetch
 
 
-       const { data, error } = await supabase.storage.from('bucket_name').upload('file_path', file)
+      const { data, error } = await supabase.storage.from('bucket_name').upload('file_path', file)
 
 
     } catch (error) {

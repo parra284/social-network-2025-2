@@ -24,8 +24,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: 24,
-    paddingBottom: 10,
+    paddingTop: 30,
     paddingHorizontal: 24,
   },
   title: {

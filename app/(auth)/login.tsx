@@ -1,6 +1,6 @@
 // app/(auth)/login.tsx
-import BrandWrap from "@/components/auth/BrandWrap";
-import Card from "@/components/auth/Card";
+import BrandWrap from "@/components/BrandWrap";
+import Form from "@/components/Form";
 import { AuthContext } from "@/contexts/AuthContext";
 import { colors } from "@/styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
@@ -32,7 +32,7 @@ export default function Login() {
       <View style={styles.container}>
         <BrandWrap />
 
-        <Card
+        <Form
           title="Iniciar sesión"
           inputs={[
             {

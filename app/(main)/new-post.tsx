@@ -1,8 +1,8 @@
-import Button from "@/components/Button";
+import Form from "@/components/Form";
 import Header from "@/components/Header";
 import { colors } from "@/styles/colors";
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function NewPost() {
 	const [title, setTitle] = useState("");
@@ -13,31 +13,26 @@ export default function NewPost() {
       <Header 
         title="New Post"
       />
-			<View style={styles.mainContent}>
-				<Text style={styles.label}>Título</Text>
-				<TextInput
-					style={styles.input}
-					placeholder="Escribe el título..."
-					placeholderTextColor={colors.neutral400}
-					value={title}
-					onChangeText={setTitle}
-				/>
-				<Text style={styles.label}>Idea</Text>
-				<TextInput
-					style={[styles.input, styles.textarea]}
-					placeholder="Comparte tu idea..."
-					placeholderTextColor={colors.neutral400}
-					value={idea}
-					onChangeText={setIdea}
-					multiline
-				/>
-				<View style={styles.buttonRow}>
-					<Button
-					label="Publicar"
-					onPress={() => (console.log('Publicar clicked'))}
-					/>
-				</View>
-			</View>
+			<Form
+			inputs={[
+				{
+					label: "Titulo",
+					placeholder: "Escribe el titulo...",
+					value: title,
+					onChangeText: setTitle
+				},
+				{
+					label: "Idea",
+					placeholder: "Comparte tu idea...",
+					value: idea,
+					onChangeText: setIdea,
+					multiline: true,
+					minHeight: 80
+				}
+			]}
+			buttonLabel="Publicar"
+			onPress={() => console.log("Publicar")}
+			/>
 		</View>
 	);
 };

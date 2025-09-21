@@ -10,50 +10,60 @@ import {
   View,
 } from "react-native";
 
-type CardProps = {
-  title: string;
+type FormProps = {
+  title?: string;
   inputs: InputField[];
   buttonLabel: string;
   onPress: () => void;
-  links?: CardLink[];
+  links?: FormLink[];
 };
 
 type InputField = {
+  label?: string,
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   keyboardType?: KeyboardTypeOptions;
+  multiline?: boolean;
+  minHeight?: number;
 };
 
-type CardLink = {
+type FormLink = {
   label: string;
   href: Href;
 };
 
-export default function Card({
+export default function Form({
   title,
   inputs,
   buttonLabel,
   onPress,
   links = [],
-}: CardProps) {
+  
+}: FormProps) {
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{title}</Text>
+    <View style={styles.form}>
+      {title ? <Text style={styles.title}>{title}</Text> : null}
 
       {inputs.map((input, idx) => (
-        <TextInput
-          key={idx}
-          style={styles.input}
-          placeholder={input.placeholder}
-          placeholderTextColor={colors.neutral500}
-          value={input.value}
-          onChangeText={input.onChangeText}
-          secureTextEntry={input.secureTextEntry}
-          keyboardType={input.keyboardType}
-        />
+        <View key={idx} style={styles.inputWrap}>
+          {input.label ? (
+            <Text style={styles.inputLabel}>{input.label}</Text>
+          ) : null}
+          <TextInput
+            style={[styles.input, input.minHeight ? {minHeight: input.minHeight, textAlignVertical:"top", marginBottom: 30} : null]}
+            placeholder={input.placeholder}
+            placeholderTextColor={colors.neutral500}
+            value={input.value}
+            onChangeText={input.onChangeText}
+            secureTextEntry={input.secureTextEntry}
+            keyboardType={input.keyboardType}
+            multiline={input.multiline}
+          />
+        </View>
       ))}
+
 
       <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={onPress}>
         <Text style={styles.buttonText}>{buttonLabel}</Text>
@@ -75,7 +85,7 @@ export default function Card({
 }
 
 const styles = StyleSheet.create({
-  card: {
+  form: {
     width: "100%",
     maxWidth: 420,
     backgroundColor: colors.neutral50,
@@ -92,9 +102,17 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "700",
     color: colors.neutral900,
-    marginBottom: 12,
+    marginBottom: 4,
     textAlign: "center",
     letterSpacing: 0.5,
+  },
+  inputWrap: {
+    marginTop: 18
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: colors.primary700,
   },
   input: {
     width: "100%",
@@ -103,13 +121,14 @@ const styles = StyleSheet.create({
     borderColor: colors.neutral300,
     borderRadius: 12,
     paddingHorizontal: 14,
-    marginTop: 14,
+    marginTop: 6,
     backgroundColor: colors.neutral100,
     color: colors.neutral900,
   },
   button: {
-    marginTop: 20,
-    height: 48,
+    marginTop: 30,
+    marginBottom: 12,
+    paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -128,7 +147,7 @@ const styles = StyleSheet.create({
   linksWrap: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 14,
+    marginTop: 14
   },
   helper: {
     textAlign: "center",

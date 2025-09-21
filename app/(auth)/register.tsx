@@ -1,5 +1,5 @@
-import BrandWrap from "@/components/auth/BrandWrap";
-import Card from "@/components/auth/Card";
+import BrandWrap from "@/components/BrandWrap";
+import Form from "@/components/Form";
 import { AuthContext } from "@/contexts/AuthContext";
 import { colors } from "@/styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
@@ -76,8 +76,8 @@ export default function Register() {
         {/* Marca con logo */}
         <BrandWrap />
 
-        {/* Card de registro */}
-        <Card
+        {/* Form de registro */}
+        <Form
           title="Registrarse"
           inputs={[
             {
