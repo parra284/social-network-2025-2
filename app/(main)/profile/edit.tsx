@@ -1,7 +1,7 @@
 import Form from '@/components/Form';
+import ModalCamera from '@/components/ModalCamera';
 import { AuthContext } from '@/contexts/AuthContext';
 import { colors } from "@/styles/colors";
-import { supabase } from '@/utils/supabase';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useContext, useState } from 'react';
@@ -15,11 +15,9 @@ import {
   View
 } from 'react-native';
 
-
 export default function EditProfile() {
   const router = useRouter();
   const { user, updateProfile } = useContext(AuthContext);
-
 
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -27,75 +25,13 @@ export default function EditProfile() {
     bio: user?.bio || '',
   });
 
-
   const [cameraVisible, setCameraVisible] = useState(false);
+  // avatar corresponds to the url of the image
   const [avatar, setAvatar] = useState(user?.avatar_url || 'https://via.placeholder.com/100/e1e1e1/666?text=User');
-
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-
-
-  const generateUrlProfile = async () => {
-    try {
-      // URL -> avatar -> blob
-
-
-      // fetch()
-      const file = await fetch
-
-
-      const { data, error } = await supabase.storage.from('bucket_name').upload('file_path', file)
-
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-
-
-  const handleSave = async () => {
-    if (!formData.name.trim()) {
-      Alert.alert('Error', 'El nombre es requerido');
-      return;
-    }
-    if (formData.username && formData.username.length < 3) {
-      Alert.alert('Error', 'El nombre de usuario debe tener al menos 3 caracteres');
-      return;
-    }
-    try {
-
-
-      const urlProfile = await generateUrlProfile()
-
-
-      const success = await updateProfile({
-        name: formData.name.trim(),
-        username: formData.username.trim() || undefined,
-        bio: formData.bio.trim() || undefined,
-      });
-      if (success) {
-        Alert.alert(
-          'Éxito',
-          'Perfil actualizado correctamente',
-          [
-            {
-              text: 'OK',
-              onPress: () => router.back()
-            }
-          ]
-        );
-      } else {
-        Alert.alert('Error', 'No se pudo actualizar el perfil. Intenta de nuevo.');
-      }
-    } catch (error: any) {
-      const errorMessage = error?.message || 'Ocurrió un error inesperado. Intenta de nuevo.';
-      Alert.alert('Error', errorMessage);
-    }
-  };
-
 
   const selectImage = () => {
     Alert.alert(
@@ -109,13 +45,44 @@ export default function EditProfile() {
     );
   };
 
-
   const handleCapture = (uri: string) => {
     setAvatar(uri);
-
-
-
   };
+
+  const generateUrlProfile = async (uri: string) => {
+    
+  };
+
+  const handleSave = async () => {
+  if (!formData.name.trim()) {
+    Alert.alert('Error', 'El nombre es requerido');
+    return;
+  }
+
+  if (formData.username && formData.username.length < 3) {
+    Alert.alert('Error', 'El nombre de usuario debe tener al menos 3 caracteres');
+    return;
+  }
+
+  try {
+    const success = await updateProfile({
+      name: formData.name.trim(),
+      username: formData.username.trim() || undefined,
+      bio: formData.bio.trim() || undefined
+    });
+
+    if (success) {
+      Alert.alert('Éxito', 'Perfil actualizado correctamente', [
+        { text: 'OK', onPress: () => router.back() }
+      ]);
+    } else {
+      Alert.alert('Error', 'No se pudo actualizar el perfil. Intenta de nuevo.');
+    }
+  } catch (error: any) {
+    const errorMessage = error?.message || 'Ocurrió un error inesperado. Intenta de nuevo.';
+    Alert.alert('Error', errorMessage);
+  }
+};
 
 
   return (
@@ -123,7 +90,7 @@ export default function EditProfile() {
       <View style={styles.avatarSection}>
         <TouchableOpacity onPress={selectImage} style={styles.avatarContainer}>
           <Image
-            source={{ uri: avatar }}
+            source={{uri: avatar}}
             style={styles.avatar}
           />
           <View style={styles.avatarOverlay}>
@@ -160,6 +127,11 @@ export default function EditProfile() {
         buttonLabel= "Guardar"
         onPress={handleSave}
       />
+      {cameraVisible && (
+        <ModalCamera 
+        onClose={() => setCameraVisible(false)}
+        onCapture={handleCapture}/>
+      )}
     </ScrollView>
   );
 }
