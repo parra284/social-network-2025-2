@@ -62,7 +62,7 @@ export default function Profile() {
         {/* Avatar stays where you want it */}
         <View style={styles.avatarWrap}>
           <Image
-            source={{ uri: "https://randomuser.me/api/portraits/men/44.jpg" }}
+            source={{ uri: user?.avatar_url }}
             style={styles.avatar}
           />
         </View>

@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }: any) => {
             return; // nothing returned
             }
 
+
             setUser(profileData);
         } catch (err) {
             console.error("Unexpected fetch error:", err);
@@ -50,8 +51,6 @@ export const AuthProvider = ({ children }: any) => {
             if (data.user) {
                 // Fetch complete user profile from profiles table
                 await fetchData(data.user.id)
-
-                console.log(user);
                 return true;
             }
 
@@ -97,7 +96,6 @@ export const AuthProvider = ({ children }: any) => {
 
                 await fetchData(data.user.id)
 
-                console.log(user);
 
                 return true;
             }

@@ -2,7 +2,9 @@ import Form from '@/components/Form';
 import ModalCamera from '@/components/ModalCamera';
 import { AuthContext } from '@/contexts/AuthContext';
 import { colors } from "@/styles/colors";
+import { supabase } from '@/utils/supabase';
 import { Ionicons } from '@expo/vector-icons';
+import { decode } from 'base64-arraybuffer-es6';
 import { useRouter } from 'expo-router';
 import React, { useContext, useState } from 'react';
 import {
@@ -28,6 +30,7 @@ export default function EditProfile() {
   const [cameraVisible, setCameraVisible] = useState(false);
   // avatar corresponds to the url of the image
   const [avatar, setAvatar] = useState(user?.avatar_url || 'https://via.placeholder.com/100/e1e1e1/666?text=User');
+  const [base64Img, setBase64Img] = useState(String)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -45,13 +48,41 @@ export default function EditProfile() {
     );
   };
 
-  const handleCapture = (uri: string) => {
+  const handleCapture = (base64: string, uri: string) => {
     setAvatar(uri);
+    setBase64Img(base64)
+  }; 
+
+  const generateUrlProfile = async () => {
+    try {
+      const { data, error } = await supabase
+      .storage
+      .from('avatars')
+      .upload('public/avatar1.jpg', decode(base64Img), {
+        cacheControl: '3600',
+        upsert: false
+      })
+    
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      return generatePublicURL();
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const generateUrlProfile = async (uri: string) => {
-    
-  };
+  const generatePublicURL = async () => {
+    const { data } = supabase
+      .storage
+      .from('avatars')
+      .getPublicUrl('public/avatar1.jpg')
+      
+      return data.publicUrl
+  }
 
   const handleSave = async () => {
   if (!formData.name.trim()) {
@@ -65,10 +96,13 @@ export default function EditProfile() {
   }
 
   try {
+    const newAvatarURL = await generateUrlProfile()
+
     const success = await updateProfile({
       name: formData.name.trim(),
       username: formData.username.trim() || undefined,
-      bio: formData.bio.trim() || undefined
+      bio: formData.bio.trim() || undefined,
+      avatar_url: newAvatarURL
     });
 
     if (success) {
