@@ -1,4 +1,3 @@
-// app/(auth)/login.tsx
 import BrandWrap from "@/components/BrandWrap";
 import Form from "@/components/Form";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -6,7 +5,7 @@ import { colors } from "@/styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useContext, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -16,9 +15,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    const response = await login(email, password);
-    if (response) {
-      router.navigate("/(main)/home");
+    try {
+      await login(email, password);    
+      router.replace("/(main)/home");
+    } catch (error: any) {
+      if (error.message === "Invalid credentials") {
+        Alert.alert("Error", "Correo o contraseña incorrectos.");
+      }
+      else {
+        Alert.alert("Error", "Algo salió mal. Intenta de nuevo.") 
+      }
     }
   };
 

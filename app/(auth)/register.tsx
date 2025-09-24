@@ -15,47 +15,48 @@ import {
 export default function Register() {
   const { register } = useContext(AuthContext);
 
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    username: '',
+    name: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleRegister = async () => {
-    if (password !== confirmPassword) {
-      alert("Las contraseñas no coinciden.");
+    if (formData.password !== formData.confirmPassword) {
+      Alert.alert("Error", "Las contraseñas no coinciden.");
       return;
     }
 
     try {
-      const success = await register(
+      await register(
         {
-          email: email.trim(),
-          name: name.trim(),
-          username: username.trim(),
-          id: '' // Se asigna automáticamente
+          email: formData.email.trim(),
+          name: formData.name.trim(),
+          username: formData.username.trim(),
+          id: '', // Se asigna automáticamente
         },
-        password
+        formData.password
       );
 
-      if (success) {
-        Alert.alert(
-          'Cuenta creada',
-          'Tu cuenta ha sido creada exitosamente',
-          [
-            {
-              text: 'OK',
-              onPress: () => router.replace('/(main)/home')
-            }
-          ]
-        );
-      } else {
-        Alert.alert('Error', 'No se pudo crear la cuenta. Intenta de nuevo.');
-      }
-    } catch (error: any) {
-      console.error('Registration error:', error);
-      const errorMessage = error?.message || 'Ocurrió un error inesperado. Intenta de nuevo.';
-      Alert.alert('Error', errorMessage);
+      Alert.alert(
+        'Cuenta creada',
+        'Tu cuenta ha sido creada exitosamente',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/(main)/home')
+          }
+        ]
+      );
+
+    } catch (error) {
+      Alert.alert("Error", "No se pudo crear la cuenta. Intenta de nuevo.");
     }
   };
 
@@ -76,30 +77,30 @@ export default function Register() {
           inputs={[
             {
               placeholder: "Correo",
-              value: email,
-              onChangeText: setEmail,
+              value: formData.email,
+              onChangeText: (value) => handleInputChange('email', value),
               keyboardType: "email-address",
             },
             {
               placeholder: "Usuario",
-              value: username,
-              onChangeText: setUsername
+              value: formData.username,
+              onChangeText: (value) => handleInputChange('username', value)
             },
             {
               placeholder: "Nombre",
-              value: name,
-              onChangeText: setName
+              value: formData.name,
+              onChangeText: (value) => handleInputChange('name', value)
             },
             {
               placeholder: "Contraseña",
-              value: password,
-              onChangeText: setPassword,
+              value: formData.password,
+              onChangeText: (value) => handleInputChange('password', value),
               secureTextEntry: true,
             },
             {
               placeholder: "Confirmar contraseña",
-              value: confirmPassword,
-              onChangeText: setConfirmPassword,
+              value: formData.confirmPassword,
+              onChangeText: (value) => handleInputChange('confirmPassword', value),
               secureTextEntry: true,
             },
           ]}

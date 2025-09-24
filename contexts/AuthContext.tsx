@@ -3,65 +3,55 @@ import { supabase } from "@/utils/supabase";
 import { createContext, useState } from "react";
 
 interface AuthContextProps {
-    user: User | null,
-    login: (email: string, password: string) => Promise<boolean>,
-    register: (user: User, password: string) => Promise<boolean>,
+    user: User,
+    login: (email: string, password: string) => Promise<void>,
+    register: (user: User, password: string) => Promise<void>,
     updateProfile: (profileData: Partial<User>) => Promise<boolean>
 }
 
 export const AuthContext = createContext({} as AuthContextProps);
 
 export const AuthProvider = ({ children }: any) => {
-
-    // varibles
-    // USER -> { email:string, password:string, name:string}
     const [user, setUser] = useState(null as any);
 
-    // funciones
     const fetchData = async (userId: string) => {
         try {
-            const { data: profileData, error } = await supabase
+            const { data , error } = await supabase
             .from("profiles")
             .select("*")
             .eq("id", userId)
             .single();
 
-            if (error) {
-            console.error("Profile fetch error:", error.message);
-            return; // nothing returned
-            }
+            if (error) throw error;
 
-
-            setUser(profileData);
-        } catch (err) {
-            console.error("Unexpected fetch error:", err);
+            setUser(data);
+        } catch (error) {
+            console.error("Fetch error", error);
+            throw error;
         }
     };
 
     const login = async (email: string, password: string) => {
         try {
-            // Authenticate with Supabase Auth
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
             if (error) {
-                console.error('Login error:', error.message);
-                return false;
-            }
-            
-            if (data.user) {
-                // Fetch complete user profile from profiles table
-                await fetchData(data.user.id)
-                return true;
-            }
+                if (error.status === 400) {
+                    throw new Error("Invalid credentials");
+                }
+                throw error;
+            }   
 
-            return false;
+            if (data.user) {
+                await fetchData(data.user.id); 
+            }
         } catch (error) {
             console.error('Login error:', error);
-            return false;
+            throw error
         }
     }
 
-    const register = async (user: User, password: string): Promise<boolean> => {
+    const register = async (user: User, password: string) => {
         try {
             const { data, error } = await supabase.auth.signUp({
                 email: user.email,
@@ -74,13 +64,10 @@ export const AuthProvider = ({ children }: any) => {
                 }
             });
 
-            if (error) {
-                console.error('Registration error:', error.message);
-                throw new Error(error.message);
-            }
+            if (error) throw error;
 
             if (data.user) {
-                const { error: profileError } = await supabase
+                const { error } = await supabase
                     .from('profiles')
                     .insert({
                         id: data.user.id,
@@ -89,21 +76,14 @@ export const AuthProvider = ({ children }: any) => {
                         username: user.username
                     });
 
-                if (profileError) {
-                    console.error('Profile creation error:', profileError.message);
-                    throw new Error(`Error creando perfil: ${profileError.message}`);
-                }
+                if (error) throw error;
 
-                await fetchData(data.user.id)
-
-
-                return true;
+                await fetchData(data.user.id);
             }
 
-            return false;
         } catch (error) {
             console.error('Registration error:', error);
-            return false;
+            throw error;
         }
     }
 
