@@ -20,23 +20,23 @@ export default function Profile() {
         {/* Row with name, username, stats */}
         <View style={styles.topRow}>
           <View style={styles.info}>
-            <Text style={styles.name}>{user?.name}</Text>
-            <Text style={styles.user}>@{user?.username}</Text>
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.user}>@{user.username}</Text>
           </View>
         </View>
 
         {/* Stats row */}
         <View style={styles.statsWrap}>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>{user?.posts_count}</Text>
+            <Text style={styles.statNumber}>{user.posts_count}</Text>
             <Text style={styles.statLabel}>Posts</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>{user?.followers_count}</Text>
+            <Text style={styles.statNumber}>{user.followers_count}</Text>
             <Text style={styles.statLabel}>Followers</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>{user?.following_count}</Text>
+            <Text style={styles.statNumber}>{user.following_count}</Text>
             <Text style={styles.statLabel}>Following</Text>
           </View>
         </View>
@@ -44,7 +44,7 @@ export default function Profile() {
         {/* Bio */}
         <View style={styles.section}> 
            <Text style={styles.bio}>
-              {user?.bio}
+              {user.bio}
           </Text>
           <Text style={styles.sectionTitle}>Seguido por</Text> 
           <Text style={styles.followedBy}>@john, @alice, @bob y 10 más</Text> 
@@ -62,7 +62,7 @@ export default function Profile() {
         {/* Avatar stays where you want it */}
         <View style={styles.avatarWrap}>
           <Image
-            source={{ uri: user?.avatar_url }}
+            source={{ uri: user.avatar_url }}
             style={styles.avatar}
           />
         </View>

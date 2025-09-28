@@ -8,13 +8,14 @@ export default function Home() {
       {/* Header: Logo and App Name */}
       <View style={styles.header}>
         <Image
-            source={require("../../assets/images/app_logo.png")}
+            source={require("@/assets/images/app_logo.png")}
             style={styles.logo}
             resizeMode="contain"
         />
         <Text style={styles.appName}>Conexus</Text>
       </View>
       <View style={styles.mainContent}>
+        
         {/* Search Bar */}
         <View style={styles.searchBarWrap}>
           <View style={styles.searchBar}>

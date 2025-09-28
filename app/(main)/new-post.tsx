@@ -10,9 +10,9 @@ export default function NewPost() {
 
 	return (
 		<View style={styles.container}>
-      <Header 
-        title="New Post"
-      />
+			<Header 
+				title="New Post"
+			/>
 			<Form
 				inputs={[
 					{

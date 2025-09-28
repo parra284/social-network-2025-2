@@ -11,10 +11,11 @@ export default function Chat() {
         title="Chats"
       />
       <View style={styles.mainContent}>
+
         {/* Chat Space Example */}
         <View style={styles.chatSpaceContainer}>
           <Image
-            source={require("../../assets/images/app_logo.png")}
+            source={require("@/assets/images/app_logo.png")}
             style={styles.profileImage}
             resizeMode="cover"
           />

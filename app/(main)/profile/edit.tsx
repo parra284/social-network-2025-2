@@ -5,6 +5,7 @@ import { colors } from "@/styles/colors";
 import { supabase } from '@/utils/supabase';
 import { Ionicons } from '@expo/vector-icons';
 import { decode } from 'base64-arraybuffer-es6';
+import { File } from 'expo-file-system';
 import { useRouter } from 'expo-router';
 import React, { useContext, useState } from 'react';
 import {
@@ -21,16 +22,14 @@ export default function EditProfile() {
   const router = useRouter();
   const { user, updateProfile } = useContext(AuthContext);
 
+  const [avatar, setAvatar] = useState(user.avatar_url);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    username: user?.username || '',
-    bio: user?.bio || '',
+    name: user.name,
+    username: user.username,
+    bio: user.bio || '',
   });
 
   const [cameraVisible, setCameraVisible] = useState(false);
-  // avatar corresponds to the url of the image
-  const [avatar, setAvatar] = useState(user?.avatar_url || 'https://via.placeholder.com/100/e1e1e1/666?text=User');
-  const [base64Img, setBase64Img] = useState(String)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -48,41 +47,34 @@ export default function EditProfile() {
     );
   };
 
-  const handleCapture = (base64: string, uri: string) => {
+  const handleCapture = (uri: string) => {
     setAvatar(uri);
-    setBase64Img(base64)
   }; 
 
   const generateUrlProfile = async () => {
-    try {
-      const { data, error } = await supabase
-      .storage
-      .from('avatars')
-      .upload('public/avatar1.jpg', decode(base64Img), {
-        cacheControl: '3600',
-        upsert: false
-      })
-    
-      if (error) {
-        console.log(error);
-        return;
-      }
+    if (!avatar) throw new Error("No avatar available")
 
-      return generatePublicURL();
+    const base64 = await new File(avatar).base64();
+    if (!base64) throw new Error("No base64");
 
-    } catch (error) {
-      console.log(error);
-    }
+    const fileName = `public/avatars/${user.id}-${Date.now()}.jpg`;
+
+    const { error } = await supabase.storage
+      .from("avatars")
+      .upload(fileName, decode(base64), {
+        contentType: "image/jpeg",
+        cacheControl: "3600",
+        upsert: true,
+      });
+
+    if (error) throw error;
+
+    const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
+
+    if (!data) throw new Error("getPublicUrl Error");
+
+    return data.publicUrl;
   };
-
-  const generatePublicURL = async () => {
-    const { data } = supabase
-      .storage
-      .from('avatars')
-      .getPublicUrl('public/avatar1.jpg')
-      
-      return data.publicUrl
-  }
 
   const handleSave = async () => {
   if (!formData.name.trim()) {
@@ -90,31 +82,41 @@ export default function EditProfile() {
     return;
   }
 
-  if (formData.username && formData.username.length < 3) {
+  if (!formData.username.trim()) {
+    Alert.alert('Error', 'El usuario es requerido');
+    return;
+  }
+
+  if (formData.username.length < 3) {
     Alert.alert('Error', 'El nombre de usuario debe tener al menos 3 caracteres');
     return;
   }
 
   try {
-    const newAvatarURL = await generateUrlProfile()
+    let newAvatarURL: string | undefined
 
-    const success = await updateProfile({
-      name: formData.name.trim(),
-      username: formData.username.trim() || undefined,
-      bio: formData.bio.trim() || undefined,
-      avatar_url: newAvatarURL
-    });
-
-    if (success) {
-      Alert.alert('Éxito', 'Perfil actualizado correctamente', [
-        { text: 'OK', onPress: () => router.back() }
-      ]);
-    } else {
-      Alert.alert('Error', 'No se pudo actualizar el perfil. Intenta de nuevo.');
+    if (avatar && !avatar.startsWith("http")) {
+      newAvatarURL = await generateUrlProfile();
     }
-  } catch (error: any) {
-    const errorMessage = error?.message || 'Ocurrió un error inesperado. Intenta de nuevo.';
-    Alert.alert('Error', errorMessage);
+
+    const updatePayload: Record<string, any> = {
+      name: formData.name.trim(),
+      username: formData.username.trim(),
+      bio: formData.bio.trim() || undefined,
+    };
+
+    if (newAvatarURL) {
+      updatePayload.avatar_url = newAvatarURL;
+    }
+
+    await updateProfile(updatePayload);
+
+    Alert.alert('Éxito', 'Perfil actualizado correctamente', [
+      { text: 'OK', onPress: () => router.back() }
+    ]);
+
+  } catch (error) {
+    Alert.alert('Error', 'No se pudo actualizar el perfil. Intenta de nuevo.');
   }
 };
 

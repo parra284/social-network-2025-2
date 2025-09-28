@@ -39,7 +39,7 @@ export default function Register() {
           email: formData.email.trim(),
           name: formData.name.trim(),
           username: formData.username.trim(),
-          id: '', // Se asigna automáticamente
+          id: ''
         },
         formData.password
       );
@@ -68,10 +68,8 @@ export default function Register() {
       style={styles.gradient}
     >
       <View style={styles.container}>
-        {/* Marca con logo */}
         <BrandWrap />
 
-        {/* Form de registro */}
         <Form
           title="Registrarse"
           inputs={[

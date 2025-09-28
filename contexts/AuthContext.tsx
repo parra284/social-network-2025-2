@@ -15,109 +15,81 @@ export const AuthProvider = ({ children }: any) => {
     const [user, setUser] = useState(null as any);
 
     const fetchData = async (userId: string) => {
-        try {
-            const { data , error } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", userId)
-            .single();
+        const { data , error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
 
-            if (error) throw error;
+        if (error) throw error;
 
-            setUser(data);
-        } catch (error) {
-            console.error("Fetch error", error);
-            throw error;
-        }
+        setUser(data);
     };
 
     const login = async (email: string, password: string) => {
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-            if (error) {
-                if (error.status === 400) {
-                    throw new Error("Invalid credentials");
-                }
-                throw error;
-            }   
-
-            if (data.user) {
-                await fetchData(data.user.id); 
+        if (error) {
+            if (error.status === 400) {
+                throw new Error("Invalid credentials");
             }
-        } catch (error) {
-            console.error('Login error:', error);
-            throw error
+            throw error;
+        }   
+
+        if (data.user) {
+            await fetchData(data.user.id); 
         }
     }
 
     const register = async (user: User, password: string) => {
-        try {
-            const { data, error } = await supabase.auth.signUp({
-                email: user.email,
-                password,
-                options: {
-                    data: {
-                        name: user.name,
-                        username: user.username
-                    }
+        const { data, error } = await supabase.auth.signUp({
+            email: user.email,
+            password,
+            options: {
+                data: {
+                    name: user.name,
+                    username: user.username
                 }
-            });
+            }
+        });
+
+        if (error) throw error;
+
+        if (data.user) {
+            const { error } = await supabase
+                .from('profiles')
+                .insert({
+                    id: data.user.id,
+                    email: user.email,
+                    name: user.name,
+                    username: user.username
+                });
 
             if (error) throw error;
 
-            if (data.user) {
-                const { error } = await supabase
-                    .from('profiles')
-                    .insert({
-                        id: data.user.id,
-                        email: user.email,
-                        name: user.name,
-                        username: user.username
-                    });
-
-                if (error) throw error;
-
-                await fetchData(data.user.id);
-            }
-
-        } catch (error) {
-            console.error('Registration error:', error);
-            throw error;
+            await fetchData(data.user.id);
         }
     }
 
-     const updateProfile = async (profileData: Partial<User>) => {
-        if (!user?.id) {
-            console.error('No user ID available');
-            return false;
-        }
+    const updateProfile = async (profileData: Partial<User>) => {
+        if (!user.id) throw new Error("No user id")
+        
+        const { error } = await supabase
+            .from('profiles')
+            .update({
+                ...profileData,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', user.id);
 
-        try {
-            const { error } = await supabase
-                .from('profiles')
-                .update({
-                    ...profileData,
-                    updated_at: new Date().toISOString()
-                })
-                .eq('id', user.id);
+        if (error) throw error;
 
-            if (error) {
-                console.error('Update profile error:', error.message);
-                throw new Error(error.message);
-            }
-            console.log(user);
+        setUser({
+            ...user,
+            ...profileData
+        });
 
-            setUser({
-                ...user,
-                ...profileData
-            });
-
-            return true;
-        } catch (error) {
-            console.error('Update profile error:', error);
-            return false;
-        }
+        return true;
     };
 
     return <AuthContext.Provider

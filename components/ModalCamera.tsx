@@ -14,7 +14,7 @@ import {
 
 type ModalCameraProps = {
   onClose: () => void;
-  onCapture: (base64:string, uri: string) => void;
+  onCapture: (uri: string) => void;
 };
 
 export default function ModalCamera({ onClose, onCapture }: ModalCameraProps) {
@@ -23,8 +23,8 @@ export default function ModalCamera({ onClose, onCapture }: ModalCameraProps) {
 
   const takePicture = async () => {
     const photo = await ref.current?.takePictureAsync({ base64: true });    
-    if (photo?.base64) {
-      onCapture(photo.base64, photo.uri);
+    if (photo?.uri) {
+      onCapture(photo.uri); 
       onClose();     
     }
   };
