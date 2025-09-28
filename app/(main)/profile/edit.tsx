@@ -6,6 +6,7 @@ import { supabase } from '@/utils/supabase';
 import { Ionicons } from '@expo/vector-icons';
 import { decode } from 'base64-arraybuffer-es6';
 import { File } from 'expo-file-system';
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from 'expo-router';
 import React, { useContext, useState } from 'react';
 import {
@@ -41,11 +42,24 @@ export default function EditProfile() {
       'Selecciona una opción',
       [
         { text: 'Cámara', onPress: () => setCameraVisible(true) },
-        { text: 'Galería', onPress: () => console.log('Gallery selected') },
+        { text: 'Galería', onPress: () => pickImage() },
         { text: 'Cancelar', style: 'cancel' }
       ]
     );
   };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setAvatar(result.assets[0].uri);
+    }
+};
 
   const handleCapture = (uri: string) => {
     setAvatar(uri);
@@ -59,6 +73,7 @@ export default function EditProfile() {
 
     const fileName = `public/avatars/${user.id}-${Date.now()}.jpg`;
 
+    // Upload to avatars bucket
     const { error } = await supabase.storage
       .from("avatars")
       .upload(fileName, decode(base64), {
@@ -69,9 +84,23 @@ export default function EditProfile() {
 
     if (error) throw error;
 
+    // Get public URL
     const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
 
     if (!data) throw new Error("getPublicUrl Error");
+
+    // Delete old path if there was already an image
+    if (user.avatar_url) {
+      const oldPath = user.avatar_url.split("/object/public/avatars/")[1]; 
+
+      const { error } = await supabase.storage
+        .from("avatars")
+        .remove([oldPath]);
+
+      if (error) {
+        throw error;
+      }
+    }
 
     return data.publicUrl;
   };
