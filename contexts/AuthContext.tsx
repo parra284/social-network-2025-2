@@ -1,12 +1,14 @@
 import { User } from "@/types/common.type";
 import { supabase } from "@/utils/supabase";
+import { decode } from 'base64-arraybuffer-es6';
+import { File } from 'expo-file-system';
 import { createContext, useState } from "react";
 
 interface AuthContextProps {
     user: User,
     login: (email: string, password: string) => Promise<void>,
     register: (user: User, password: string) => Promise<void>,
-    updateProfile: (profileData: Partial<User>) => Promise<boolean>
+    updateProfile: (profileData: Partial<User>, avatarUri?: string) => Promise<void>
 }
 
 export const AuthContext = createContext({} as AuthContextProps);
@@ -37,7 +39,7 @@ export const AuthProvider = ({ children }: any) => {
         }   
 
         if (data.user) {
-            await fetchData(data.user.id); 
+            await fetchData(data.user.id);
         }
     }
 
@@ -71,13 +73,56 @@ export const AuthProvider = ({ children }: any) => {
         }
     }
 
-    const updateProfile = async (profileData: Partial<User>) => {
+    const updateProfile = async (profileData: Partial<User>, avatarUri?: string) => {
         if (!user.id) throw new Error("No user id")
         
+        let avatar_url = user.avatar_url;
+
+        if (avatarUri && !avatarUri.startsWith("http")) {
+            console.log(avatarUri);
+
+            const base64 = await new File(avatarUri).base64();
+            if (!base64) throw new Error("No base64");
+        
+            const fileName = `public/avatars/${user.id}-${Date.now()}.jpg`;
+        
+            // Upload to avatars bucket
+            const { error } = await supabase.storage
+                .from("avatars")
+                .upload(fileName, decode(base64), {
+                contentType: "image/jpeg",
+                cacheControl: "3600",
+                upsert: true,
+                });
+        
+            if (error) throw error;
+        
+            // Get public URL
+            const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
+        
+            if (!data) throw new Error("getPublicUrl Error");
+
+            avatar_url = data.publicUrl
+        
+            // Delete old path if there was already an image
+            if (user.avatar_url) {
+                const oldPath = user.avatar_url.split("/object/public/avatars/")[1]; 
+        
+                const { error } = await supabase.storage
+                .from("avatars")
+                .remove([oldPath]);
+        
+                if (error) {
+                throw error;
+                }
+            }
+        }
+
         const { error } = await supabase
             .from('profiles')
             .update({
                 ...profileData,
+                avatar_url,
                 updated_at: new Date().toISOString()
             })
             .eq('id', user.id);
@@ -86,10 +131,9 @@ export const AuthProvider = ({ children }: any) => {
 
         setUser({
             ...user,
-            ...profileData
+            ...profileData,
+            avatar_url
         });
-
-        return true;
     };
 
     return <AuthContext.Provider

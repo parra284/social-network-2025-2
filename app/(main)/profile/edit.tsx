@@ -2,10 +2,7 @@ import Form from '@/components/Form';
 import ModalCamera from '@/components/ModalCamera';
 import { AuthContext } from '@/contexts/AuthContext';
 import { colors } from "@/styles/colors";
-import { supabase } from '@/utils/supabase';
 import { Ionicons } from '@expo/vector-icons';
-import { decode } from 'base64-arraybuffer-es6';
-import { File } from 'expo-file-system';
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from 'expo-router';
 import React, { useContext, useState } from 'react';
@@ -59,95 +56,43 @@ export default function EditProfile() {
     if (!result.canceled) {
       setAvatar(result.assets[0].uri);
     }
-};
+  };
 
   const handleCapture = (uri: string) => {
     setAvatar(uri);
   }; 
 
-  const generateUrlProfile = async () => {
-    if (!avatar) throw new Error("No avatar available")
-
-    const base64 = await new File(avatar).base64();
-    if (!base64) throw new Error("No base64");
-
-    const fileName = `public/avatars/${user.id}-${Date.now()}.jpg`;
-
-    // Upload to avatars bucket
-    const { error } = await supabase.storage
-      .from("avatars")
-      .upload(fileName, decode(base64), {
-        contentType: "image/jpeg",
-        cacheControl: "3600",
-        upsert: true,
-      });
-
-    if (error) throw error;
-
-    // Get public URL
-    const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
-
-    if (!data) throw new Error("getPublicUrl Error");
-
-    // Delete old path if there was already an image
-    if (user.avatar_url) {
-      const oldPath = user.avatar_url.split("/object/public/avatars/")[1]; 
-
-      const { error } = await supabase.storage
-        .from("avatars")
-        .remove([oldPath]);
-
-      if (error) {
-        throw error;
-      }
-    }
-
-    return data.publicUrl;
-  };
-
   const handleSave = async () => {
-  if (!formData.name.trim()) {
-    Alert.alert('Error', 'El nombre es requerido');
-    return;
-  }
-
-  if (!formData.username.trim()) {
-    Alert.alert('Error', 'El usuario es requerido');
-    return;
-  }
-
-  if (formData.username.length < 3) {
-    Alert.alert('Error', 'El nombre de usuario debe tener al menos 3 caracteres');
-    return;
-  }
-
-  try {
-    let newAvatarURL: string | undefined
-
-    if (avatar && !avatar.startsWith("http")) {
-      newAvatarURL = await generateUrlProfile();
+    if (!formData.name.trim()) {
+      Alert.alert('Error', 'El nombre es requerido');
+      return;
     }
 
-    const updatePayload: Record<string, any> = {
-      name: formData.name.trim(),
-      username: formData.username.trim(),
-      bio: formData.bio.trim() || undefined,
-    };
-
-    if (newAvatarURL) {
-      updatePayload.avatar_url = newAvatarURL;
+    if (!formData.username.trim()) {
+      Alert.alert('Error', 'El usuario es requerido');
+      return;
     }
 
-    await updateProfile(updatePayload);
+    if (formData.username.length < 3) {
+      Alert.alert('Error', 'El nombre de usuario debe tener al menos 3 caracteres');
+      return;
+    }
 
-    Alert.alert('Éxito', 'Perfil actualizado correctamente', [
-      { text: 'OK', onPress: () => router.back() }
-    ]);
+    try {
+      await updateProfile({
+        name: formData.name.trim(),
+        username: formData.username.trim(),
+        bio: formData.bio.trim() || undefined,
+      }, avatar);
 
-  } catch (error) {
-    Alert.alert('Error', 'No se pudo actualizar el perfil. Intenta de nuevo.');
-  }
-};
+      Alert.alert('Éxito', 'Perfil actualizado correctamente', [
+        { text: 'OK', onPress: () => router.back() }
+      ]);
+
+    } catch (error) {
+      Alert.alert('Error', 'No se pudo actualizar el perfil. Intenta de nuevo.');
+    }
+  };
 
 
   return (

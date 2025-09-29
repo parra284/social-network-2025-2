@@ -4,7 +4,6 @@
     "slug": "social-network",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
     "scheme": "socialnetwork",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
