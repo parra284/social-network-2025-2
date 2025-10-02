@@ -31,12 +31,7 @@ export const AuthProvider = ({ children }: any) => {
     const login = async (email: string, password: string) => {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-        if (error) {
-            if (error.status === 400) {
-                throw new Error("Invalid credentials");
-            }
-            throw error;
-        }   
+        if (error) throw error;
 
         if (data.user) {
             await fetchData(data.user.id);
@@ -74,66 +69,64 @@ export const AuthProvider = ({ children }: any) => {
     }
 
     const updateProfile = async (profileData: Partial<User>, avatarUri?: string) => {
-        if (!user.id) throw new Error("No user id")
-        
-        let avatar_url = user.avatar_url;
+        try {
+            let avatar_url = user.avatar_url;
 
-        if (avatarUri && !avatarUri.startsWith("http")) {
-            console.log(avatarUri);
-
-            const base64 = await new File(avatarUri).base64();
-            if (!base64) throw new Error("No base64");
-        
-            const fileName = `public/avatars/${user.id}-${Date.now()}.jpg`;
-        
-            // Upload to avatars bucket
-            const { error } = await supabase.storage
-                .from("avatars")
-                .upload(fileName, decode(base64), {
-                contentType: "image/jpeg",
-                cacheControl: "3600",
-                upsert: true,
-                });
-        
-            if (error) throw error;
-        
-            // Get public URL
-            const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
-        
-            if (!data) throw new Error("getPublicUrl Error");
-
-            avatar_url = data.publicUrl
-        
-            // Delete old path if there was already an image
-            if (user.avatar_url) {
-                const oldPath = user.avatar_url.split("/object/public/avatars/")[1]; 
-        
+            if (avatarUri && !avatarUri.startsWith("http")) {
+                const base64 = await new File(avatarUri).base64();
+            
+                const fileName = `public/avatars/${user.id}-${Date.now()}.jpg`;
+            
+                // Upload to avatars bucket
                 const { error } = await supabase.storage
-                .from("avatars")
-                .remove([oldPath]);
-        
-                if (error) {
-                throw error;
+                    .from("avatars")
+                    .upload(fileName, decode(base64), {
+                    contentType: "image/jpeg",
+                    cacheControl: "3600",
+                    upsert: true,
+                    });
+            
+                if (error) throw error;
+            
+                // Get public URL
+                const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
+            
+                if (!data) throw new Error("getPublicUrl Error");
+
+                avatar_url = data.publicUrl
+            
+                // Delete old path if there was already an image
+                if (user.avatar_url) {
+                    const oldPath = user.avatar_url.split("/object/public/avatars/")[1]; 
+            
+                    const { error } = await supabase.storage
+                    .from("avatars")
+                    .remove([oldPath]);
+            
+                    if (error) throw error;
                 }
             }
-        }
 
-        const { error } = await supabase
-            .from('profiles')
-            .update({
+            const { error } = await supabase
+                .from('profiles')
+                .update({
+                    ...profileData,
+                    avatar_url,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', user.id);
+
+            if (error) throw error;
+
+            setUser({
+                ...user,
                 ...profileData,
-                avatar_url,
-                updated_at: new Date().toISOString()
-            })
-            .eq('id', user.id);
-
-        if (error) throw error;
-
-        setUser({
-            ...user,
-            ...profileData,
-            avatar_url
-        });
+                avatar_url
+            });
+        } catch (error){
+            console.error("Error en updateProfile: ", error);
+            throw error;
+        }
     };
 
     return <AuthContext.Provider

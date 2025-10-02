@@ -18,13 +18,8 @@ export default function Login() {
     try {
       await login(email, password);    
       router.replace("/(main)/home");
-    } catch (error: any) {
-      if (error.message === "Invalid credentials") {
-        Alert.alert("Error", "Correo o contraseña incorrectos.");
-      }
-      else {
-        Alert.alert("Error", "Algo salió mal. Intenta de nuevo.") 
-      }
+    } catch (error) {
+      Alert.alert("Error", "Algo salió mal. Intenta de nuevo.") 
     }
   };
 

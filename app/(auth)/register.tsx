@@ -82,7 +82,14 @@ export default function Register() {
             {
               placeholder: "Usuario",
               value: formData.username,
-              onChangeText: (value) => handleInputChange('username', value)
+              onChangeText: (value) => {
+                // Normaliza mientras escribe
+                const sanitized = value
+                  .toLowerCase()            // todo a minúsculas
+                  .replace(/\s/g, "")       // elimina espacios
+                  .replace(/[^a-z0-9._-]/g, ""); // solo caracteres válidos
+                handleInputChange("username", sanitized);
+              }
             },
             {
               placeholder: "Nombre",

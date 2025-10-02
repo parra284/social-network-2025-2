@@ -5,12 +5,39 @@ export interface User {
     username: string,
     avatar_url?: string,
     bio?: string,
-    is_verified?: boolean,
     followers_count?: number,
     following_count?: number,
     posts_count?: number,
-    likes_count?: number,
-    last_active?: string,
-    created_at?: string,
-    updated_at?: string
+    created_at?: Date,
+    updated_at?: Date
+}
+
+export interface Media {
+    id: string,
+    url: string,
+    type: 'image' | 'video' | 'document' | 'audio',
+    message_id: string
+}
+
+export interface Message {
+    id: string,
+    text: string,
+    createdAt: Date,
+    deletedAt?: Date,
+    seenAt?: Date,
+    sentAt: Date,
+    sentBy: string,
+    chatId: string
+}
+
+export interface Chat {
+    id: string,
+    userId1: string,
+    userId2: string,
+    created_at?: Date,
+    updated_at?: Date
+}
+
+export interface ChatWithName extends Chat {
+  name: string;
 }
