@@ -1,11 +1,13 @@
-import { ChatWithName } from "@/types/common.type";
+import { ChatWithName, Message } from "@/types/common.type";
 import { supabase } from "@/utils/supabase";
 import { createContext, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
 interface DataContextProps {
     getChats: () => Promise<ChatWithName[]>;
+    getMessages: (chatId: string) => Promise<Message[]>;
     createChat: (userId2: string) => Promise<ChatWithName>;
+    sendMessage: (chatId: string, text: string, sentBy: string) => Promise<void>;
 }
 
 export const DataContext = createContext({} as DataContextProps);
@@ -40,6 +42,27 @@ export const DataProvider = ({ children }: any) => {
         );
     };
 
+    const getMessages = async (chatId: string): Promise<Message[]> => {
+        const { data, error } = await supabase
+        .from("messages")
+        .select("id, text, created_at, sent_at, sent_by, chat_id")
+        .eq("chat_id", chatId)
+        .order("created_at", { ascending: true });
+
+        if (error) throw error;
+
+        return (
+        data?.map((m: any) => ({
+            id: m.id,
+            text: m.text,
+            createdAt: new Date(m.created_at),
+            sentAt: m.sent_at,
+            sentBy: m.sent_by,
+            chatId: m.chat_id,
+        })) ?? []
+        );
+    };
+
     const createChat = async (username: string): Promise<ChatWithName> => {
         // 1. Find user by username
         const { data: profile, error: profileError } = await supabase
@@ -70,10 +93,29 @@ export const DataProvider = ({ children }: any) => {
         };
     };
 
+    const sendMessage = async (
+        chatId: string,
+        text: string,
+        sentBy: string
+    ): Promise<void> => {
+        const { error } = await supabase.from("messages").insert([
+        {
+            text,
+            chat_id: chatId,
+            sent_by: sentBy,
+            created_at: new Date().toISOString()
+        },
+        ]);
+
+        if (error) throw error;
+    };
+
     return <DataContext.Provider
         value={{
             getChats,
-            createChat
+            getMessages,
+            createChat,
+            sendMessage
         }}
     >
         {children}

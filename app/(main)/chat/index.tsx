@@ -61,7 +61,10 @@ export default function index() {
             style={styles.chatSpaceContainer}
             onPress={() => router.push({
               pathname: "/(main)/chat/[id]", 
-              params: { id: value.id },
+              params: { 
+                id: value.id,
+                name: value.name
+              },
             })}
           >
           <View style={styles.chatTextContainer}>
